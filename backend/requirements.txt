@@ -16,7 +16,7 @@ passlib[bcrypt]==1.7.4
 bcrypt==4.1.2
 
 # AI/ML Libraries
-spacy==3.8.2
+spacy>=3.7.2
 sentence-transformers==3.3.1
 scikit-learn==1.6.0
 numpy>=1.26.0
