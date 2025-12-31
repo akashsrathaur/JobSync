@@ -17,8 +17,8 @@ bcrypt==4.1.2
 spacy==3.8.2
 sentence-transformers==2.3.1
 scikit-learn==1.4.0
-numpy==1.26.3
-transformers==4.37.2
+numpy==1.24.4
+transformers==4.36.2
 torch==2.1.2
 
 # PDF Processing
