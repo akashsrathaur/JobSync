@@ -2,11 +2,8 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Briefcase,
-  MapPin,
-  Search,
   Users,
   Zap,
   TrendingUp,
@@ -19,15 +16,7 @@ import {
 import Logo from './components/Logo';
 
 export default function Home() {
-  const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [location, setLocation] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    router.push(`/auth/signup?search=${searchQuery}&location=${location}`);
-  };
 
   const companies = [
     { name: 'Google', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg' },
@@ -140,7 +129,7 @@ export default function Home() {
             </h1>
 
             <p className="text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed font-medium">
-              Let our Job Copilot search, match and apply - so you don't have to!
+              Let our Job Copilot search, match and apply - so you don&apos;t have to!
             </p>
 
             {/* Search Bar / CTA */}

@@ -1,22 +1,33 @@
 'use client';
 
+import React from 'react';
 import { useState } from 'react';
+import { DollarSign } from 'lucide-react';
+
+interface FilterState {
+    location: string;
+    salaryMin: number;
+    salaryMax: number;
+    experienceLevel: string[];
+    jobType: string[];
+    datePosted: string;
+}
 
 interface FilterSidebarProps {
-    onFilterChange: (filters: any) => void;
+    onFilterChange: (filters: FilterState) => void;
 }
 
 export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
-    const [filters, setFilters] = useState({
+    const [filters, setFilters] = useState<FilterState>({
         location: '',
         salaryMin: 0,
         salaryMax: 200000,
-        experienceLevel: [] as string[],
-        jobType: [] as string[],
+        experienceLevel: [],
+        jobType: [],
         datePosted: 'any',
     });
 
-    const handleFilterChange = (key: string, value: any) => {
+    const handleFilterChange = (key: keyof FilterState, value: string | number | string[]) => {
         const newFilters = { ...filters, [key]: value };
         setFilters(newFilters);
         onFilterChange(newFilters);
@@ -49,26 +60,23 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
             </div>
 
             {/* Salary Range */}
-            <div className="mb-6">
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Salary Range
-                </label>
-                <div className="space-y-2">
-                    <input
-                        type="range"
-                        min="0"
-                        max="200000"
-                        step="10000"
-                        value={filters.salaryMax}
-                        onChange={(e) => handleFilterChange('salaryMax', parseInt(e.target.value))}
-                        className="w-full"
-                    />
-                    <div className="flex justify-between text-sm text-slate-600">
-                        <span>$0</span>
-                        <span className="font-semibold text-indigo-600">
-                            ${(filters.salaryMax / 1000).toFixed(0)}k+
-                        </span>
-                    </div>
+            <div className="mb-8">
+                <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                    <DollarSign className="w-4 h-4 text-emerald-500" />
+                    Salary Range (LPA)
+                </h3>
+                <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                    value={filters.salaryMax / 100000} // Assuming value stored in raw numbers, adjusting for UI slider 0-100L
+                    onChange={(e) => handleFilterChange('salaryMax', parseInt(e.target.value) * 100000)}
+                />
+                <div className="flex justify-between text-sm text-slate-600 mt-2 font-medium">
+                    <span>₹0</span>
+                    <span>₹{filters.salaryMax / 100000}L+</span>
                 </div>
             </div>
 

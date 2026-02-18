@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_ENDPOINTS } from '@/lib/config';
-import { apiClient } from '@/lib/api-client';
 
 export default function ResumePage() {
     const router = useRouter();
@@ -61,8 +60,12 @@ export default function ResumePage() {
             setTimeout(() => {
                 router.push('/dashboard');
             }, 2000);
-        } catch (err: any) {
-            setError(err.message || 'Upload failed');
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Upload failed');
+            }
         } finally {
             setUploading(false);
         }

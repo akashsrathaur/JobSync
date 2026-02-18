@@ -35,8 +35,12 @@ export default function LoginPage() {
             const data = await response.json();
             apiClient.setTokens(data.access_token, data.refresh_token);
             router.push('/dashboard');
-        } catch (err: any) {
-            setError(err.message || 'An error occurred');
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('An error occurred');
+            }
         } finally {
             setLoading(false);
         }
@@ -99,7 +103,7 @@ export default function LoginPage() {
                     </form>
 
                     <div className="mt-6 text-center text-sm text-slate-600">
-                        Don't have an account?{' '}
+                        Don&apos;t have an account?{' '}
                         <Link href="/auth/signup" className="text-indigo-600 hover:text-indigo-700 font-medium">
                             Sign up
                         </Link>

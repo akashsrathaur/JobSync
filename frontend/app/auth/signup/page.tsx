@@ -36,8 +36,12 @@ export default function SignupPage() {
             const data = await response.json();
             apiClient.setTokens(data.access_token, data.refresh_token);
             router.push('/dashboard');
-        } catch (err: any) {
-            setError(err.message || 'An error occurred');
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('An error occurred');
+            }
         } finally {
             setLoading(false);
         }

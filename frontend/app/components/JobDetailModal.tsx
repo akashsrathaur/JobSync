@@ -61,7 +61,7 @@ export default function JobDetailModal({ job, isOpen, onClose, onApply }: JobDet
                                 </span>
                                 {job.salary_min && job.salary_max && (
                                     <span className="flex items-center gap-1 font-semibold text-emerald-600">
-                                        💰 ₹{((job.salary_min * 83) / 100000).toFixed(1)}L - ₹{((job.salary_max * 83) / 100000).toFixed(1)} LPA
+                                        💰 ₹{(job.salary_min / 100000).toFixed(1)}L - ₹{(job.salary_max / 100000).toFixed(1)} LPA
                                     </span>
                                 )}
                                 {job.job_type && (

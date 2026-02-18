@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { apiClient } from '@/lib/api-client';
 import { API_ENDPOINTS } from '@/lib/config';
 import SearchBar from '../components/SearchBar';
@@ -11,18 +10,6 @@ import FilterSidebar from '../components/FilterSidebar';
 import JobCard from '../components/JobCard';
 import JobDetailModal from '../components/JobDetailModal';
 import Logo from '../components/Logo';
-
-import {
-    Target,
-    FileText,
-    Bookmark,
-    Award,
-    Briefcase,
-    MapPin,
-    DollarSign,
-    Clock,
-    CheckCircle2
-} from 'lucide-react';
 
 interface Job {
     id: string;
@@ -61,10 +48,12 @@ export default function DashboardPage() {
     useEffect(() => {
         checkAuth();
         loadJobs();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
         filterAndSortJobs();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [jobs, searchQuery, sortBy]);
 
     const checkAuth = () => {
@@ -103,8 +92,11 @@ export default function DashboardPage() {
             setJobs(enhancedData);
             setFilteredJobs(enhancedData);
             setHasResume(true);
-        } catch (error: any) {
-            if (error.response?.status === 400) {
+        } catch (error: unknown) {
+            // Check if error is a 400 Bad Request (Resume not found or similar)
+            // We need to safely access response.status structure if it exists
+            const err = error as { response?: { status: number } };
+            if (err.response?.status === 400) {
                 setHasResume(false);
             }
         } finally {
@@ -170,7 +162,7 @@ export default function DashboardPage() {
         // Would integrate with applications API
     };
 
-    const handleFilterChange = (filters: any) => {
+    const handleFilterChange = (filters: unknown) => {
         console.log('Filters changed:', filters);
         // Would apply filters to jobs list
     };
