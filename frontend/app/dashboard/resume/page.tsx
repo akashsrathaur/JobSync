@@ -72,14 +72,14 @@ export default function ResumePage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-emerald-50">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50">
             <header className="bg-white border-b border-slate-200 shadow-sm">
                 <div className="container mx-auto px-6 py-4">
                     <div className="flex justify-between items-center">
-                        <div className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-emerald-600 bg-clip-text text-transparent">
-                            JobSync
+                        <div className="text-2xl font-bold text-slate-900 inline-block">
+                            <span className="text-blue-500">Job</span>Sync
                         </div>
-                        <a href="/dashboard" className="text-slate-700 hover:text-indigo-600 font-medium">
+                        <a href="/dashboard" className="text-slate-700 hover:text-blue-600 font-medium transition-colors">
                             ← Back to Dashboard
                         </a>
                     </div>
@@ -97,12 +97,12 @@ export default function ResumePage() {
                         {success ? (
                             <div className="text-center py-12">
                                 <div className="text-6xl mb-4">✅</div>
-                                <h2 className="text-2xl font-bold text-emerald-600 mb-2">Resume Uploaded!</h2>
+                                <h2 className="text-2xl font-bold text-blue-600 mb-2">Resume Uploaded!</h2>
                                 <p className="text-slate-600">Redirecting to your matches...</p>
                             </div>
                         ) : (
                             <>
-                                <div className="border-2 border-dashed border-slate-300 rounded-lg p-12 text-center hover:border-indigo-400 transition-colors">
+                                <div className="border-2 border-dashed border-slate-300 rounded-lg p-12 text-center hover:border-blue-400 transition-colors">
                                     <input
                                         type="file"
                                         accept=".pdf"
@@ -139,7 +139,7 @@ export default function ResumePage() {
                                     </div>
                                 )}
 
-                                <div className="mt-8 p-4 bg-indigo-50 rounded-lg">
+                                <div className="mt-8 p-4 bg-blue-50 rounded-lg">
                                     <h3 className="font-semibold text-slate-800 mb-2">What we extract:</h3>
                                     <ul className="space-y-1 text-sm text-slate-600">
                                         <li>✓ Technical skills and technologies</li>

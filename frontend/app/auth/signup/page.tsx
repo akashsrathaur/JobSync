@@ -48,11 +48,11 @@ export default function SignupPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-emerald-50 flex items-center justify-center px-6">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 flex items-center justify-center px-6">
             <div className="max-w-md w-full">
                 <div className="text-center mb-8">
-                    <Link href="/" className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-emerald-600 bg-clip-text text-transparent inline-block">
-                        JobSync
+                    <Link href="/" className="text-3xl font-bold text-slate-900 inline-block">
+                        <span className="text-blue-500">Job</span>Sync
                     </Link>
                     <h1 className="text-3xl font-bold mt-6 text-slate-800">Create your account</h1>
                     <p className="text-slate-600 mt-2">Start finding your dream job today</p>
@@ -122,7 +122,7 @@ export default function SignupPage() {
 
                     <div className="mt-6 text-center text-sm text-slate-600">
                         Already have an account?{' '}
-                        <Link href="/auth/login" className="text-indigo-600 hover:text-indigo-700 font-medium">
+                        <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium transition-colors">
                             Log in
                         </Link>
                     </div>

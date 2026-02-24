@@ -22,6 +22,7 @@ interface Job {
     job_type?: string;
     experience_level?: string;
     posted_date?: string;
+    url?: string;
 }
 
 interface JobDetailModalProps {
@@ -42,9 +43,8 @@ export default function JobDetailModal({ job, isOpen, onClose, onApply }: JobDet
     };
 
     return (
-        <div className="modal-overlay animate-fade-in" onClick={onClose}>
-            <div className="modal-content animate-slide-up custom-scrollbar" onClick={(e) => e.stopPropagation()}>
-                {/* Header */}
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 animate-fade-in" onClick={onClose}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative animate-slide-up custom-scrollbar" onClick={(e) => e.stopPropagation()}>
                 <div className="sticky top-0 bg-white border-b border-slate-200 p-6 flex justify-between items-start">
                     <div className="flex gap-4 flex-1">
                         <div className="w-20 h-20 bg-gradient-to-br from-indigo-100 to-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -83,9 +83,7 @@ export default function JobDetailModal({ job, isOpen, onClose, onApply }: JobDet
                     </button>
                 </div>
 
-                {/* Content */}
                 <div className="p-6">
-                    {/* Match Score Section */}
                     {job.match_score !== undefined && (
                         <div className="bg-gradient-to-br from-indigo-50 to-emerald-50 rounded-xl p-6 mb-6">
                             <div className="flex items-center justify-between mb-4">
@@ -116,7 +114,6 @@ export default function JobDetailModal({ job, isOpen, onClose, onApply }: JobDet
                         </div>
                     )}
 
-                    {/* Job Description */}
                     <div className="mb-6">
                         <h3 className="text-xl font-bold text-slate-800 mb-3">About the Role</h3>
                         <p className="text-slate-600 leading-relaxed">
@@ -124,7 +121,6 @@ export default function JobDetailModal({ job, isOpen, onClose, onApply }: JobDet
                         </p>
                     </div>
 
-                    {/* Requirements */}
                     {job.requirements && job.requirements.length > 0 && (
                         <div className="mb-6">
                             <h3 className="text-xl font-bold text-slate-800 mb-3">Requirements</h3>
@@ -139,7 +135,6 @@ export default function JobDetailModal({ job, isOpen, onClose, onApply }: JobDet
                         </div>
                     )}
 
-                    {/* Skills */}
                     {job.skills && job.skills.length > 0 && (
                         <div className="mb-6">
                             <h3 className="text-xl font-bold text-slate-800 mb-3">Required Skills</h3>
@@ -153,7 +148,6 @@ export default function JobDetailModal({ job, isOpen, onClose, onApply }: JobDet
                         </div>
                     )}
 
-                    {/* Benefits */}
                     {job.benefits && job.benefits.length > 0 && (
                         <div className="mb-6">
                             <h3 className="text-xl font-bold text-slate-800 mb-3">Benefits</h3>
@@ -169,7 +163,6 @@ export default function JobDetailModal({ job, isOpen, onClose, onApply }: JobDet
                     )}
                 </div>
 
-                {/* Footer Actions */}
                 <div className="sticky bottom-0 bg-white border-t border-slate-200 p-6 flex gap-4">
                     <button
                         onClick={() => onApply(job.id)}

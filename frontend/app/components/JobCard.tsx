@@ -18,16 +18,18 @@ interface Job {
     skills?: string[];
     job_type?: string;
     posted_date?: string;
+    url?: string;
 }
 
 interface JobCardProps {
     job: Job;
     onViewDetails: (job: Job) => void;
     onSave: (jobId: string) => void;
+    onApply: (jobId: string) => void;
     isSaved?: boolean;
 }
 
-export default function JobCard({ job, onViewDetails, onSave, isSaved = false }: JobCardProps) {
+export default function JobCard({ job, onViewDetails, onSave, onApply, isSaved = false }: JobCardProps) {
     const getScoreClass = (score: number) => {
         if (score >= 80) return 'score-excellent';
         if (score >= 60) return 'score-good';
@@ -37,18 +39,41 @@ export default function JobCard({ job, onViewDetails, onSave, isSaved = false }:
 
     const getScoreBorderClass = (score: number) => {
         if (score >= 80) return 'border-l-emerald-500';
-        if (score >= 60) return 'border-l-blue-500';
         if (score >= 40) return 'border-l-amber-500';
         return 'border-l-red-500';
     };
 
+    // Dynamic styles
+    const bgColors = [
+        'bg-blue-50/60 hover:bg-blue-50/90 border-blue-100',
+        'bg-indigo-50/60 hover:bg-indigo-50/90 border-indigo-100',
+        'bg-sky-50/60 hover:bg-sky-50/90 border-sky-100',
+        'bg-violet-50/60 hover:bg-violet-50/90 border-violet-100',
+        'bg-fuchsia-50/60 hover:bg-fuchsia-50/90 border-fuchsia-100',
+        'bg-teal-50/60 hover:bg-teal-50/90 border-teal-100'
+    ];
+
+    const iconGradients = [
+        'from-blue-100 to-indigo-100 text-blue-600',
+        'from-indigo-100 to-violet-100 text-indigo-600',
+        'from-sky-100 to-blue-100 text-sky-600',
+        'from-violet-100 to-fuchsia-100 text-violet-600',
+        'from-fuchsia-100 to-pink-100 text-fuchsia-600',
+        'from-teal-100 to-emerald-100 text-teal-600'
+    ];
+
+    const hashString = (str: string) => str.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const colorIndex = hashString(job.company) % bgColors.length;
+    const cardAccent = bgColors[colorIndex];
+    const iconAccent = iconGradients[colorIndex];
+
     return (
-        <div className={`job-card border-l-4 ${getScoreBorderClass(job.match_score || 0)} group`}>
+        <div className={`rounded-2xl p-6 transition-all duration-300 border shadow-sm hover:shadow-md border-l-4 ${getScoreBorderClass(job.match_score || 0)} ${cardAccent} group`}>
             <div className="flex justify-between items-start mb-4">
                 {/* Company Logo Placeholder */}
                 <div className="flex gap-4 flex-1">
-                    <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <span className="text-2xl font-bold text-indigo-600">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${iconAccent} rounded-xl flex items-center justify-center flex-shrink-0`}>
+                        <span className="text-2xl font-bold">
                             {job.company.charAt(0)}
                         </span>
                     </div>
@@ -115,9 +140,9 @@ export default function JobCard({ job, onViewDetails, onSave, isSaved = false }:
                     <div className="grid grid-cols-5 gap-3">
                         {Object.entries(job.score_breakdown).map(([key, value]) => (
                             <div key={key} className="text-center">
-                                <div className="progress-bar mb-1">
+                                <div className="h-1.5 w-full bg-slate-100 rounded-full mb-2 overflow-hidden">
                                     <div
-                                        className="progress-fill"
+                                        className="h-full bg-blue-500 rounded-full transition-all duration-500"
                                         style={{ width: `${value}%` }}
                                     />
                                 </div>
@@ -137,14 +162,14 @@ export default function JobCard({ job, onViewDetails, onSave, isSaved = false }:
             <div className="flex gap-3 pt-4 border-t border-slate-100">
                 <button
                     onClick={() => onViewDetails(job)}
-                    className="btn-primary flex-1"
+                    className="flex-1 px-4 py-3 rounded-xl font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all duration-200"
                 >
                     View Details
                 </button>
                 <button
                     onClick={() => onSave(job.id)}
-                    className={`px-6 py-3 rounded-lg font-semibold transition-all duration-200 ${isSaved
-                        ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                    className={`px-4 py-3 rounded-xl font-semibold transition-all duration-200 ${isSaved
+                        ? 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                         }`}
                 >
@@ -158,7 +183,10 @@ export default function JobCard({ job, onViewDetails, onSave, isSaved = false }:
                         </svg>
                     )}
                 </button>
-                <button className="px-6 py-3 rounded-lg font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-all duration-200">
+                <button
+                    onClick={() => onApply(job.id)}
+                    className="flex-1 btn-primary py-3 rounded-xl shadow-lg shadow-blue-500/20"
+                >
                     Apply
                 </button>
             </div>

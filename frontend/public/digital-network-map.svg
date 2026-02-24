@@ -1,0 +1,60 @@
+<svg width="1440" height="600" viewBox="0 0 1440 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="dot-pattern" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.5" fill="#0ea5e9" opacity="0.6"/>
+    </pattern>
+    <mask id="world-mask">
+      <!-- Translated up by ~100px so it fits into the 600px height nicely -->
+      <path d="M1300 100 C 1350 100, 1400 150, 1350 200 C 1300 250, 1250 200, 1200 250 C 1150 300, 1100 250, 1050 200 C 1000 150, 1050 100, 1100 50 C 1150 0, 1250 50, 1300 100 Z" fill="white" />
+      <path d="M800 100 C 850 50, 950 50, 900 150 C 850 250, 800 200, 750 250 C 700 300, 750 350, 800 400 C 850 450, 900 400, 950 450 C 1000 500, 950 550, 900 600 C 850 650, 800 600, 750 550 C 700 500, 650 450, 700 400 C 750 350, 700 300, 650 250 C 600 200, 650 150, 700 100 C 750 50, 800 100, 800 100 Z" fill="white" />
+      <path d="M400 100 C 450 50, 550 50, 500 150 C 450 250, 400 200, 350 250 C 300 300, 350 350, 400 400 C 450 450, 500 400, 550 450 C 600 500, 550 550, 500 600 C 450 650, 400 600, 350 550 C 300 500, 250 450, 300 400 C 350 350, 300 300, 250 250 C 200 200, 250 150, 300 100 C 350 50, 400 100, 400 100 Z" fill="white" />
+      <path d="M150 100 C 200 50, 300 50, 250 150 C 200 250, 150 200, 100 250 C 50 300, 100 350, 150 400 C 200 450, 250 400, 300 450 C 350 500, 300 550, 250 600 C 200 650, 150 600, 100 550 C 50 500, 0 450, 50 400 C 100 350, 50 300, 0 250 C -50 200, 0 150, 50 100 C 100 50, 150 100, 150 100 Z" fill="white" />
+    </mask>
+  </defs>
+  
+  <!-- Dotted map base (more visible) -->
+  <rect width="1440" height="600" fill="url(#dot-pattern)" mask="url(#world-mask)" opacity="0.85" />
+
+  <!-- Bold Network paths -->
+  <g stroke="#0284c7" stroke-width="2.5" opacity="0.8">
+    <!-- Connections between major hubs -->
+    <path d="M400,200 Q550,150 750,200" fill="none" />
+    <path d="M750,200 Q950,250 1100,200" fill="none" />
+    <path d="M400,200 Q450,300 500,300" fill="none" />
+    <path d="M750,200 Q800,280 850,250" fill="none" />
+    <path d="M1100,200 Q1200,100 1300,100" fill="none" />
+    
+    <!-- Cross continental links -->
+    <line x1="250" y1="250" x2="400" y2="200" />
+    <line x1="500" y1="300" x2="750" y2="200" />
+    <path d="M850,250 Q1000,400 1200,450" fill="none" stroke-dasharray="6,4" />
+    <path d="M400,200 Q200,100 250,250" fill="none" stroke-dasharray="4,4" />
+    <path d="M750,200 Q650,50 1100,200" fill="none" opacity="0.4" />
+    <path d="M1100,200 Q1150,450 1200,450" fill="none" />
+  </g>
+
+  <!-- Bright Network nodes -->
+  <g fill="#0284c7">
+    <circle cx="250" cy="250" r="5" />
+    <circle cx="400" cy="200" r="8" />
+    <circle cx="500" cy="300" r="6" />
+    <circle cx="750" cy="200" r="9" />
+    <circle cx="850" cy="250" r="7" />
+    <circle cx="1100" cy="200" r="6" />
+    <circle cx="1200" cy="450" r="4" />
+    <circle cx="1300" cy="100" r="6" />
+  </g>
+
+  <!-- Thicker Node halos -->
+  <g fill="none" stroke="#0ea5e9" stroke-width="2" opacity="0.6">
+    <circle cx="400" cy="200" r="16" />
+    <circle cx="750" cy="200" r="18" />
+    <circle cx="1100" cy="200" r="12" />
+    <circle cx="850" cy="250" r="12" />
+  </g>
+  
+  <g fill="none" stroke="#0ea5e9" stroke-width="1" opacity="0.3">
+    <circle cx="400" cy="200" r="28" />
+    <circle cx="750" cy="200" r="28" />
+  </g>
+</svg>

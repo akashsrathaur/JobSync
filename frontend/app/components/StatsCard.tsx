@@ -6,7 +6,7 @@ interface StatsCardProps {
     title: string;
     value: string | number;
     icon: React.ReactNode;
-    color: 'indigo' | 'emerald' | 'amber' | 'pink';
+    color: 'indigo' | 'blue' | 'amber' | 'pink';
     trend?: {
         value: number;
         isPositive: boolean;
@@ -17,7 +17,7 @@ interface StatsCardProps {
 export default function StatsCard({ title, value, icon, color, trend, className = '' }: StatsCardProps) {
     const colors = {
         indigo: 'text-indigo-600 bg-indigo-50',
-        emerald: 'text-emerald-600 bg-emerald-50',
+        blue: 'text-blue-600 bg-blue-50',
         amber: 'text-amber-600 bg-amber-50',
         pink: 'text-pink-600 bg-pink-50'
     };
