@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { apiClient } from '@/lib/api-client';
-import { API_ENDPOINTS } from '@/lib/config';
+import { apiClient } from '../../../lib/api-client';
+import { API_ENDPOINTS } from '../../../lib/config';
 
 export default function SignupPage() {
     const router = useRouter();

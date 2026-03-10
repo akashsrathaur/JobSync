@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiClient } from '@/lib/api-client';
-import { API_ENDPOINTS } from '@/lib/config';
+import { apiClient } from '../../lib/api-client';
+import { API_ENDPOINTS } from '../../lib/config';
 import SearchBar from '../components/SearchBar';
 import StatsCard from '../components/StatsCard';
 import FilterSidebar from '../components/FilterSidebar';

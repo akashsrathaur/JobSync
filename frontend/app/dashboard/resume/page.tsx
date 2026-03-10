@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { API_ENDPOINTS } from '@/lib/config';
+import { API_ENDPOINTS } from '../../../lib/config';
 
 export default function ResumePage() {
     const router = useRouter();
