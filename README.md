@@ -70,6 +70,10 @@ When running the backend server locally, comprehensive interactive API documenta
 - `/frontend` - Contains all Next.js source code, components, and client-side logic.
 - `/backend` - Contains FastAPI routing, database models, ML logic, and migrations.
 
+## Author
+
+**Akash S Rathaur** ([@akashsrathaur](https://github.com/akashsrathaur))
+
 ## License
 
 This project is licensed under the MIT License.

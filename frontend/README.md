@@ -46,3 +46,7 @@ Ensure your environment variables are set correctly for your production backend,
 npm run build
 npm start
 ```
+
+## Author
+
+**Akash S Rathaur** ([@akashsrathaur](https://github.com/akashsrathaur))
