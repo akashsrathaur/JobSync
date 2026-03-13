@@ -405,18 +405,18 @@ export default function Home() {
             {/* Review 1 */}
             <div className="card-polished-dark bg-[#0a0e0b] flex flex-col justify-between">
               <div>
-                <div className="flex text-yellow-500 mb-4 gap-1">
+                <div className="flex text-blue-500 mb-4 gap-1">
                   {'★★★★★'.split('').map((star, i) => <span key={i}>{star}</span>)}
                 </div>
                 <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                  "JobSync has completely changed how I look for jobs. Uploading my resume and letting the AI find the exact matches saved me hundreds of hours. I landed a Senior Dev role in 2 weeks!"
+                  "The semantic matching engine is unparalleled. Within 48 hours of uploading my resume, I was connected with three Series B startups that perfectly aligned with my React and Next.js expertise. JobSync isn't just a job board; it's a career catalyst."
                 </p>
               </div>
               <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-                <div className="w-10 h-10 rounded-full bg-slate-700"></div>
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-xs font-bold">SJ</div>
                 <div>
-                  <div className="font-bold text-sm">Rahul S.</div>
-                  <div className="text-xs text-slate-500">Software Engineer</div>
+                  <div className="font-bold text-sm">Sarah Jenkins</div>
+                  <div className="text-xs text-slate-500">Lead Frontend Engineer</div>
                 </div>
               </div>
             </div>
@@ -424,18 +424,18 @@ export default function Home() {
             {/* Review 2 */}
             <div className="card-polished-dark bg-[#0a0e0b] flex flex-col justify-between">
               <div>
-                <div className="flex text-yellow-500 mb-4 gap-1">
+                <div className="flex text-blue-500 mb-4 gap-1">
                   {'★★★★★'.split('').map((star, i) => <span key={i}>{star}</span>)}
                 </div>
                 <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                  "The Match Analytics feature is mind-blowing. It told me exactly which skills I was missing for a Product Manager role. Highly recommend to anyone actively searching."
+                  "As someone who values aesthetics and efficiency, JobSync's interface is a breath of fresh air. The 'Match Analytics' feature provided actionable insights that helped me refine my profile for top-tier design roles at global agencies."
                 </p>
               </div>
               <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-                <div className="w-10 h-10 rounded-full bg-slate-700"></div>
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-xs font-bold">DL</div>
                 <div>
-                  <div className="font-bold text-sm">Priya M.</div>
-                  <div className="text-xs text-slate-500">Product Manager</div>
+                  <div className="font-bold text-sm">David Laurent</div>
+                  <div className="text-xs text-slate-500">Senior Product Designer</div>
                 </div>
               </div>
             </div>
@@ -443,18 +443,18 @@ export default function Home() {
             {/* Review 3 */}
             <div className="card-polished-dark bg-[#0a0e0b] flex flex-col justify-between">
               <div>
-                <div className="flex text-yellow-500 mb-4 gap-1">
+                <div className="flex text-blue-500 mb-4 gap-1">
                   {'★★★★★'.split('').map((star, i) => <span key={i}>{star}</span>)}
                 </div>
                 <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                  "I was skeptical about AI matching, but the very first job recommended was a perfect fit for my obscure tech stack. The UI is gorgeous and super fast."
+                  "I was impressed by the accuracy of the spaCy-powered NLP parsing. It identified my niche research publications and matched me with a role at a leading AI lab that I would have otherwise missed. Exceptional technology for serious professionals."
                 </p>
               </div>
               <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-                <div className="w-10 h-10 rounded-full bg-slate-700"></div>
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-xs font-bold">ER</div>
                 <div>
-                  <div className="font-bold text-sm">Arjun K.</div>
-                  <div className="text-xs text-slate-500">Data Scientist</div>
+                  <div className="font-bold text-sm">Dr. Elena Rodriguez</div>
+                  <div className="text-xs text-slate-500">AI Research Scientist</div>
                 </div>
               </div>
             </div>

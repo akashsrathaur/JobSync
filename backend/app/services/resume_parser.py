@@ -23,7 +23,8 @@ class ResumeParser:
         except OSError:
             # Model not found, download it
             import subprocess
-            subprocess.run(["python", "-m", "spacy", "download", settings.SPACY_MODEL])
+            import sys
+            subprocess.run([sys.executable, "-m", "spacy", "download", settings.SPACY_MODEL])
             self.nlp = spacy.load(settings.SPACY_MODEL)
         
         # Comprehensive skill database (expandable)
