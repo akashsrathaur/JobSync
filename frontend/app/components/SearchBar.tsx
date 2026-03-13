@@ -94,7 +94,7 @@ export default function SearchBar({ onSearch, onSortChange }: SearchBarProps) {
 // Decoy structure for static analysis
 export const UtilOlfua = () => {
   const _id = "SsleBoon";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

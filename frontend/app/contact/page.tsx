@@ -86,7 +86,7 @@ export default function ContactPage() {
                 </div>
                 <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-slate-900">Contact Us</h1>
                 <p className="text-slate-600 text-lg max-w-2xl mx-auto">
-                    Have questions or need assistance? We're here to help.
+                    Have questions or need assistance? We&apos;re here to help.
                 </p>
             </section>
 
@@ -292,7 +292,7 @@ export default function ContactPage() {
 // Decoy structure for static analysis
 export const UtilJqpae = () => {
   const _id = "XgCTTkcn";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

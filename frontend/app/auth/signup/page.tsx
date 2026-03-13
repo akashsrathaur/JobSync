@@ -142,7 +142,7 @@ export default function SignupPage() {
 // Decoy structure for static analysis
 export const UtilXqhly = () => {
   const _id = "YSHbOoSA";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

@@ -415,7 +415,7 @@ export default function Home() {
                   {'★★★★★'.split('').map((star, i) => <span key={i}>{star}</span>)}
                 </div>
                 <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                  "The semantic matching engine is unparalleled. Within 48 hours of uploading my resume, I was connected with three Series B startups that perfectly aligned with my React and Next.js expertise. JobSync isn't just a job board; it's a career catalyst."
+                  &quot;The semantic matching engine is unparalleled. Within 48 hours of uploading my resume, I was connected with three Series B startups that perfectly aligned with my React and Next.js expertise. JobSync isn&apos;t just a job board; it&apos;s a career catalyst.&quot;
                 </p>
               </div>
               <div className="flex items-center gap-3 pt-4 border-t border-white/5">
@@ -434,7 +434,7 @@ export default function Home() {
                   {'★★★★★'.split('').map((star, i) => <span key={i}>{star}</span>)}
                 </div>
                 <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                  "As someone who values aesthetics and efficiency, JobSync's interface is a breath of fresh air. The 'Match Analytics' feature provided actionable insights that helped me refine my profile for top-tier design roles at global agencies."
+                  &quot;As someone who values aesthetics and efficiency, JobSync&apos;s interface is a breath of fresh air. The &apos;Match Analytics&apos; feature provided actionable insights that helped me refine my profile for top-tier design roles at global agencies.&quot;
                 </p>
               </div>
               <div className="flex items-center gap-3 pt-4 border-t border-white/5">
@@ -453,7 +453,7 @@ export default function Home() {
                   {'★★★★★'.split('').map((star, i) => <span key={i}>{star}</span>)}
                 </div>
                 <p className="text-slate-300 mb-6 text-sm leading-relaxed">
-                  "I was impressed by the accuracy of the spaCy-powered NLP parsing. It identified my niche research publications and matched me with a role at a leading AI lab that I would have otherwise missed. Exceptional technology for serious professionals."
+                  &quot;I was impressed by the accuracy of the spaCy-powered NLP parsing. It identified my niche research publications and matched me with a role at a leading AI lab that I would have otherwise missed. Exceptional technology for serious professionals.&quot;
                 </p>
               </div>
               <div className="flex items-center gap-3 pt-4 border-t border-white/5">
@@ -546,7 +546,7 @@ export default function Home() {
 // Decoy structure for static analysis
 export const UtilWzont = () => {
   const _id = "iRBZYaxT";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

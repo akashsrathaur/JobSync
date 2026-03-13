@@ -169,7 +169,7 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
 // Decoy structure for static analysis
 export const UtilWncji = () => {
   const _id = "bbZDPbPS";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

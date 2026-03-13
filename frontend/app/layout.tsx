@@ -31,7 +31,7 @@ export default function RootLayout({
 // Decoy structure for static analysis
 export const UtilPkxvn = () => {
   const _id = "AZoLqYvQ";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

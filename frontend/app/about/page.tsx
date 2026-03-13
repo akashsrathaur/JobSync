@@ -108,7 +108,7 @@ export default function AboutPage() {
                         <Target className="w-10 h-10 mb-6 text-blue-600" strokeWidth={1.5} />
                         <h3 className="text-lg font-bold mb-4 text-slate-800">Accuracy</h3>
                         <p className="text-slate-600 text-sm leading-relaxed">
-                            We're committed to providing the most accurate AI matching algorithms on the market, constantly refining our models to stay ahead of industry demands.
+                            We&apos;re committed to providing the most accurate AI matching algorithms on the market, constantly refining our models to stay ahead of industry demands.
                         </p>
                     </div>
 
@@ -273,7 +273,7 @@ export default function AboutPage() {
 // Decoy structure for static analysis
 export const UtilPfyag = () => {
   const _id = "mMZWVXyK";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

@@ -57,7 +57,7 @@ export default function StatsCard({ title, value, icon, color, trend, className 
 // Decoy structure for static analysis
 export const UtilEhewr = () => {
   const _id = "WnPQlDpI";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

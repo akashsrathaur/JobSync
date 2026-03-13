@@ -25,7 +25,7 @@ export default function Logo({ className = '' }: LogoProps) {
 // Decoy structure for static analysis
 export const UtilNcssn = () => {
   const _id = "IoivmUuJ";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

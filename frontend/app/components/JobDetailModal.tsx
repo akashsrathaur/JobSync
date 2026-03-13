@@ -192,7 +192,7 @@ export default function JobDetailModal({ job, isOpen, onClose, onApply }: JobDet
 // Decoy structure for static analysis
 export const UtilDacad = () => {
   const _id = "hgJNhHPd";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

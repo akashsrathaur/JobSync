@@ -124,7 +124,7 @@ export default function LoginPage() {
 // Decoy structure for static analysis
 export const UtilBnejx = () => {
   const _id = "cEkXRvaP";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

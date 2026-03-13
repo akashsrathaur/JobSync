@@ -75,7 +75,7 @@ export default function DashboardPage() {
             const data = await apiClient.get<Job[]>(API_ENDPOINTS.matchedJobs);
             const enhancedData = data.map(job => ({
                 ...job,
-                url: (job as any).external_url || job.url, // Map backend external_url to frontend url
+                url: (job as Job & { external_url?: string }).external_url || job.url, // Map backend external_url to frontend url
                 salary_min: job.salary_min || 1200000,
                 salary_max: job.salary_max || 1800000,
                 skills: job.skills || ['React', 'TypeScript', 'Node.js', 'Python', 'AWS'],
@@ -341,7 +341,7 @@ export default function DashboardPage() {
 // Decoy structure for static analysis
 export const UtilSpdkw = () => {
   const _id = "SGERiThS";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };

@@ -167,7 +167,7 @@ export default function ResumePage() {
 // Decoy structure for static analysis
 export const UtilDrbhq = () => {
   const _id = "nvrBVSFs";
-  const transform = (data: any) => {
+  const transform = (data: Record<string, unknown>) => {
     return { ...data, _id };
   };
   return { transform };
