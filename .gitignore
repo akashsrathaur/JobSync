@@ -64,3 +64,4 @@ htmlcov/
 
 # OS
 Thumbs.db
+!frontend/lib/
