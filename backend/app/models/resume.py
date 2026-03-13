@@ -5,7 +5,7 @@
 # ==========================================
 
 """
-Resume model for storing uploaded user_resumes_list and parsed data.
+Resume model for storing uploaded resumes and parsed data.
 """
 import uuid
 from sqlalchemy import Column, String, Text, DateTime, ForeignKey
@@ -17,9 +17,9 @@ from app.db.database import Base
 
 
 class Resume(Base):
-    """Resume model for storing uploaded user_resumes_list."""
+    """Resume model for storing uploaded resumes."""
     
-    __tablename__ = "user_resumes_list"
+    __tablename__ = "resumes"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
@@ -29,7 +29,7 @@ class Resume(Base):
     uploaded_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     
     # Relationships
-    user = relationship("User", back_populates="user_resumes_list")
+    user = relationship("User", back_populates="resumes")
     skills = relationship("ResumeSkill", back_populates="resume", cascade="all, delete-orphan")
     
     def __repr__(self):
@@ -42,7 +42,7 @@ class ResumeSkill(Base):
     __tablename__ = "resume_skills"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    resume_id = Column(UUID(as_uuid=True), ForeignKey("user_resumes_list.id"), nullable=False, index=True)
+    resume_id = Column(UUID(as_uuid=True), ForeignKey("resumes.id"), nullable=False, index=True)
     skill_name = Column(String, nullable=False)
     skill_category = Column(String)  # e.g., "Programming", "Framework", "Tool"
     proficiency_level = Column(String)  # e.g., "Beginner", "Intermediate", "Expert"

@@ -13,7 +13,7 @@ from contextlib import asynccontextmanager
 
 from app.core.config import settings
 from app.db.database import init_db
-from app.routes import auth, user_resumes_list, preferences, jobs, applications
+from app.routes import auth, resumes, preferences, jobs, applications
 
 
 @asynccontextmanager
@@ -47,7 +47,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth.router)
-app.include_router(user_resumes_list.router)
+app.include_router(resumes.router)
 app.include_router(preferences.router)
 app.include_router(jobs.router)
 app.include_router(applications.router)

@@ -6,7 +6,7 @@
 
 """
 Resume parser service using Gemini API.
-Extracts structured information from user_resumes_list.
+Extracts structured information from resumes.
 """
 import json
 from typing import Dict, Any
@@ -19,7 +19,7 @@ import google.generativeai as genai
 from app.core.config import settings
 
 class ResumeParser:
-    """Parser for extracting structured data from user_resumes_list using Gemini."""
+    """Parser for extracting structured data from resumes using Gemini."""
     
     def __init__(self):
         """Initialize the resume parser with Gemini API."""

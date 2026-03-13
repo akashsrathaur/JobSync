@@ -5,7 +5,7 @@
 # ==========================================
 
 """
-Resume routes for uploading and managing user_resumes_list.
+Resume routes for uploading and managing resumes.
 """
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
@@ -23,7 +23,7 @@ from app.schemas import ResumeUpload, ResumeResponse
 from app.services.resume_parser import resume_parser
 
 
-router = APIRouter(prefix="/api/user_resumes_list", tags=["Resumes"])
+router = APIRouter(prefix="/api/resumes", tags=["Resumes"])
 
 
 def validate_file(file: UploadFile) -> None:
@@ -121,15 +121,15 @@ async def upload_resume(
 
 
 @router.get("", response_model=List[ResumeResponse])
-async def get_user_resumes_list(
+async def get_resumes(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """
-    Get all user_resumes_list for the current user.
+    Get all resumes for the current user.
     """
-    user_resumes_list = db.query(Resume).filter(Resume.user_id == current_user.id).all()
-    return user_resumes_list
+    resumes = db.query(Resume).filter(Resume.user_id == current_user.id).all()
+    return resumes
 
 
 @router.get("/{resume_id}", response_model=ResumeResponse)
