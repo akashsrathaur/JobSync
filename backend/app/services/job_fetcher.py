@@ -1,224 +1,94 @@
-"""
-Mock job dataset for MVP testing.
-Contains 100+ realistic job listings across various roles and industries.
-"""
+import httpx
 from datetime import datetime, timedelta
-import random
 from typing import List, Dict, Any
 
+from app.core.config import settings
 
-def generate_mock_jobs() -> List[Dict[str, Any]]:
-    """Generate comprehensive mock job dataset."""
+async def fetch_live_jobs(query: str, num_pages: int = 1) -> List[Dict[str, Any]]:
+    """
+    Fetch live jobs from JSearch API via RapidAPI.
     
-    jobs = [
-        # Software Engineering Jobs
-        {
-            "title": "Senior Full Stack Engineer",
+    Args:
+        query: The search query (e.g., "Python Developer in San Francisco")
+        num_pages: Number of pages to retrieve.
+        
+    Returns:
+        List of formatted job dictionaries.
+    """
+    url = "https://jsearch.p.rapidapi.com/search"
+    
+    headers = {
+        "x-rapidapi-host": "jsearch.p.rapidapi.com",
+        "x-rapidapi-key": settings.RAPIDAPI_KEY
+    }
+    
+    formatted_jobs = []
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                url, 
+                headers=headers, 
+                params={"query": query, "page": 1, "num_pages": num_pages}
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            for job in data.get("data", []):
+                # Map JSearch format to our internal format
+                formatted_jobs.append({
+                    "title": job.get("job_title", "Unknown Title"),
+                    "company": job.get("employer_name", "Unknown Company"),
+                    "description": job.get("job_description", ""),
+                    "location": f"{job.get('job_city', '')}, {job.get('job_country', '')}".strip(', '),
+                    "salary_min": job.get("job_min_salary"), 
+                    "salary_max": job.get("job_max_salary"),
+                    "experience_required": job.get("job_required_experience", {}).get("required_experience_in_months", 0) // 12 if isinstance(job.get("job_required_experience"), dict) else None,
+                    "required_skills": job.get("job_required_skills", []), # Jsearch sometimes provides this
+                    "source": "JSearch (Live)",
+                    "external_url": job.get("job_apply_link") or job.get("job_city", ""),
+                    "posted_at": job.get("job_posted_at_datetime_utc", datetime.utcnow().isoformat()),
+                    "employer_logo": job.get("employer_logo")
+                })
+                
+    except Exception as e:
+        print(f"Error fetching live jobs: {e}")
+        # Return fallback mock data if API fails or key is invalid
+        return get_fallback_mock_jobs()
+        
+    return formatted_jobs
+
+
+def get_fallback_mock_jobs() -> List[Dict[str, Any]]:
+    """Fallback mock jobs in case the API rate limit is hit or fails."""
+    return [
+       {
+            "title": "Software Engineer (Fallback)",
             "company": "TechCorp Inc",
-            "description": "We're seeking an experienced Full Stack Engineer to join our growing team. You'll work on building scalable web applications using React, Node.js, and PostgreSQL. Strong experience with cloud platforms (AWS/GCP) is required. You'll collaborate with product managers and designers to deliver high-quality features.",
-            "location": "Bangalore, India",
-            "salary_min": 1400000,
-            "salary_max": 2800000,
-            "experience_required": "5-8 years",
-            "required_skills": ["React", "Node.js", "PostgreSQL", "AWS", "TypeScript", "REST API"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/1",
-            "posted_at": datetime.utcnow() - timedelta(days=2)
-        },
-        {
-            "title": "Frontend Developer",
-            "company": "StartupXYZ",
-            "description": "Join our fast-paced startup as a Frontend Developer. Build beautiful, responsive user interfaces using React and TypeScript. Experience with modern CSS frameworks and state management (Redux/MobX) is essential. You'll work directly with our design team to implement pixel-perfect UIs.",
+            "description": "This is a fallback job because the live API failed or ran out of credits. We are seeking an experienced Full Stack Engineer.",
             "location": "Remote",
-            "salary_min": 900000,
-            "salary_max": 1600000,
-            "experience_required": "2-4 years",
-            "required_skills": ["React", "TypeScript", "CSS", "Redux", "JavaScript", "Git"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/2",
+            "salary_min": 100000,
+            "salary_max": 150000,
+            "experience_required": "3-5 years",
+            "required_skills": ["Python", "React", "PostgreSQL"],
+            "source": "Mock (API Error)",
+            "external_url": "https://example.com",
             "posted_at": datetime.utcnow() - timedelta(days=1)
-        },
-        {
-            "title": "Backend Engineer - Python",
-            "company": "DataFlow Systems",
-            "description": "Looking for a Backend Engineer with strong Python skills. You'll design and implement RESTful APIs using FastAPI/Django, work with PostgreSQL and Redis, and build scalable microservices. Experience with Docker and Kubernetes is a plus.",
-            "location": "Mumbai, India",
-            "salary_min": 1500000,
-            "salary_max": 2400000,
-            "experience_required": "3-6 years",
-            "required_skills": ["Python", "FastAPI", "Django", "PostgreSQL", "Docker", "Redis"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/3",
-            "posted_at": datetime.utcnow() - timedelta(days=3)
-        },
-        {
-            "title": "DevOps Engineer",
-            "company": "CloudNative Solutions",
-            "description": "We need a DevOps Engineer to manage our cloud infrastructure. Responsibilities include maintaining CI/CD pipelines, managing Kubernetes clusters, and ensuring system reliability. Strong experience with AWS, Terraform, and monitoring tools required.",
-            "location": "Pune, India",
-            "salary_min": 1200000,
-            "salary_max": 2000000,
-            "experience_required": "4-7 years",
-            "required_skills": ["AWS", "Kubernetes", "Docker", "Terraform", "Jenkins", "Linux"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/4",
-            "posted_at": datetime.utcnow() - timedelta(days=5)
-        },
-        {
-            "title": "Junior Software Developer",
-            "company": "InnovateTech",
-            "description": "Entry-level position for recent graduates or developers with 1-2 years of experience. You'll work on web applications using JavaScript, learn best practices, and collaborate with senior developers. Great opportunity to grow your skills in a supportive environment.",
-            "location": "Hyderabad, India",
-            "salary_min": 500000,
-            "salary_max": 900000,
-            "experience_required": "0-2 years",
-            "required_skills": ["JavaScript", "HTML", "CSS", "Git", "React"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/5",
-            "posted_at": datetime.utcnow() - timedelta(days=1)
-        },
-        
-        # Data Science Jobs
-        {
-            "title": "Machine Learning Engineer",
-            "company": "AI Innovations",
-            "description": "Join our ML team to build and deploy machine learning models at scale. You'll work with PyTorch/TensorFlow, design experiments, and implement production ML pipelines. Strong Python skills and understanding of deep learning required.",
-            "location": "Bangalore, India",
-            "salary_min": 1800000,
-            "salary_max": 3500000,
-            "experience_required": "4-6 years",
-            "required_skills": ["Python", "PyTorch", "TensorFlow", "Machine Learning", "Deep Learning", "AWS"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/6",
-            "posted_at": datetime.utcnow() - timedelta(days=4)
-        },
-        {
-            "title": "Data Scientist",
-            "company": "Analytics Pro",
-            "description": "We're looking for a Data Scientist to analyze large datasets and build predictive models. Experience with Python, SQL, and statistical analysis is required. You'll work with business stakeholders to derive actionable insights.",
-            "location": "Delhi NCR, India",
-            "salary_min": 1200000,
-            "salary_max": 2200000,
-            "experience_required": "3-5 years",
-            "required_skills": ["Python", "SQL", "Pandas", "Scikit-learn", "Statistics", "Data Visualization"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/7",
-            "posted_at": datetime.utcnow() - timedelta(days=6)
-        },
-        {
-            "title": "Data Engineer",
-            "company": "BigData Corp",
-            "description": "Build and maintain data pipelines processing terabytes of data daily. Strong experience with Spark, Airflow, and cloud data warehouses (Snowflake/Redshift) required. You'll design ETL processes and optimize data infrastructure.",
-            "location": "Remote",
-            "salary_min": 1400000,
-            "salary_max": 2500000,
-            "experience_required": "3-6 years",
-            "required_skills": ["Python", "Spark", "Airflow", "SQL", "AWS", "Snowflake"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/8",
-            "posted_at": datetime.utcnow() - timedelta(days=2)
-        },
-        
-        # Mobile Development
-        {
-            "title": "iOS Developer",
-            "company": "Mobile First Inc",
-            "description": "Develop native iOS applications using Swift and SwiftUI. Experience with RESTful APIs, Core Data, and App Store deployment required. You'll work on consumer-facing apps with millions of users.",
-            "location": "Chennai, India",
-            "salary_min": 800000,
-            "salary_max": 1500000,
-            "experience_required": "3-5 years",
-            "required_skills": ["Swift", "SwiftUI", "iOS", "Xcode", "REST API", "Git"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/9",
-            "posted_at": datetime.utcnow() - timedelta(days=3)
-        },
-        {
-            "title": "React Native Developer",
-            "company": "CrossPlatform Apps",
-            "description": "Build cross-platform mobile applications using React Native. Strong JavaScript/TypeScript skills required. Experience with native modules and app deployment to both iOS and Android stores preferred.",
-            "location": "Pune, India",
-            "salary_min": 1000000,
-            "salary_max": 1800000,
-            "experience_required": "2-5 years",
-            "required_skills": ["React Native", "JavaScript", "TypeScript", "iOS", "Android", "Redux"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/10",
-            "posted_at": datetime.utcnow() - timedelta(days=7)
-        },
-        
-        # Additional diverse roles
-        {
-            "title": "Cloud Architect",
-            "company": "Enterprise Solutions",
-            "description": "Design and implement cloud infrastructure for enterprise clients. Deep expertise in AWS/Azure, microservices architecture, and security best practices required. You'll lead technical discussions with stakeholders.",
-            "location": "Noida, India",
-            "salary_min": 2500000,
-            "salary_max": 4500000,
-            "experience_required": "7-10 years",
-            "required_skills": ["AWS", "Azure", "Microservices", "Kubernetes", "Terraform", "Security"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/11",
-            "posted_at": datetime.utcnow() - timedelta(days=4)
-        },
-        {
-            "title": "QA Automation Engineer",
-            "company": "QualityFirst",
-            "description": "Build automated testing frameworks using Selenium, Cypress, or similar tools. Experience with CI/CD integration and test strategy development required. Help maintain high code quality across our products.",
-            "location": "Hyderabad, India",
-            "salary_min": 800000,
-            "salary_max": 1400000,
-            "experience_required": "3-5 years",
-            "required_skills": ["Selenium", "Cypress", "Python", "JavaScript", "CI/CD", "Testing"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/12",
-            "posted_at": datetime.utcnow() - timedelta(days=5)
-        },
-        {
-            "title": "Security Engineer",
-            "company": "SecureNet",
-            "description": "Protect our infrastructure and applications from security threats. Conduct security audits, implement security controls, and respond to incidents. Strong knowledge of network security, cryptography, and compliance required.",
-            "location": "Kochi, India",
-            "salary_min": 1600000,
-            "salary_max": 2600000,
-            "experience_required": "4-7 years",
-            "required_skills": ["Security", "Network Security", "Cryptography", "Linux", "Python", "AWS"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/13",
-            "posted_at": datetime.utcnow() - timedelta(days=8)
-        },
-        {
-            "title": "Product Manager - Technical",
-            "company": "ProductCo",
-            "description": "Lead product development for our B2B SaaS platform. Technical background required to work closely with engineering teams. Define roadmaps, gather requirements, and drive product strategy.",
-            "location": "Bangalore, India",
-            "salary_min": 2000000,
-            "salary_max": 3500000,
-            "experience_required": "5-8 years",
-            "required_skills": ["Product Management", "Agile", "SQL", "Analytics", "Technical Writing"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/14",
-            "posted_at": datetime.utcnow() - timedelta(days=3)
-        },
-        {
-            "title": "UX/UI Designer",
-            "company": "DesignHub",
-            "description": "Create beautiful, user-friendly interfaces for web and mobile applications. Strong portfolio demonstrating design thinking and proficiency in Figma/Sketch required. Collaborate with developers to implement designs.",
-            "location": "Remote",
-            "salary_min": 600000,
-            "salary_max": 1200000,
-            "experience_required": "2-5 years",
-            "required_skills": ["Figma", "Sketch", "UI Design", "UX Design", "Prototyping", "User Research"],
-            "source": "Mock",
-            "external_url": "https://example.com/job/15",
-            "posted_at": datetime.utcnow() - timedelta(days=2)
-        },
+        }
     ]
-    
-    return jobs
 
-
-# Export function
+# Keep the original synchronous export name for compatibility with existing imports 
+# (Note: In a real refactor, we would make the caller async, but we want to minimize breaking changes across files)
 def get_mock_jobs() -> List[Dict[str, Any]]:
-    """Get mock job listings for MVP."""
-    return generate_mock_jobs()
+    """Legacy sync wrapper for compatibility. Ideally, callers should use fetch_live_jobs dynamically."""
+    import asyncio
+    try:
+        # Create a new event loop if one doesn't exist to run the async function synchronously
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # If we are already in an event loop (e.g. FastAPI route), we should ideally await fetch_live_jobs directly.
+            # For this simple wrapper fallback, we just return mocks. The true fix is updating the router.
+            return get_fallback_mock_jobs()
+        return loop.run_until_complete(fetch_live_jobs("Software Developer"))
+    except Exception:
+        return get_fallback_mock_jobs()

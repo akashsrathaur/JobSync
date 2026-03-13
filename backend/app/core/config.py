@@ -3,6 +3,7 @@ Application configuration using Pydantic Settings.
 Loads environment variables and provides type-safe configuration.
 """
 from pydantic_settings import BaseSettings
+import os
 from typing import Optional
 
 
@@ -34,6 +35,8 @@ class Settings(BaseSettings):
     # AI Models
     SPACY_MODEL: str = "en_core_web_sm"
     SENTENCE_TRANSFORMER_MODEL: str = "all-MiniLM-L6-v2"
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+    RAPIDAPI_KEY: str = os.getenv("RAPIDAPI_KEY", "")
     
     # AWS S3 (Optional)
     AWS_ACCESS_KEY_ID: Optional[str] = None

@@ -15,21 +15,34 @@ from app.models.match import Match
 from app.models.application import SavedJob
 from app.schemas import JobResponse, JobWithMatch, SavedJobResponse
 from app.services.matcher import job_matcher
-from app.services.job_fetcher import get_mock_jobs
+from app.services.job_fetcher import fetch_live_jobs, get_fallback_mock_jobs
 
 
 router = APIRouter(prefix="/api/jobs", tags=["Jobs"])
 
 
-def seed_jobs_if_empty(db: Session) -> None:
-    """Seed database with mock jobs if empty."""
-    job_count = db.query(Job).count()
-    if job_count == 0:
-        mock_jobs = get_mock_jobs()
-        for job_data in mock_jobs:
+async def ensure_live_jobs(db: Session, query: str = "Software Developer", location: str = "") -> None:
+    """Fetch live jobs from API and seed database if we need more variety."""
+    search_query = f"{query} {location}".strip()
+    
+    try:
+        live_jobs = await fetch_live_jobs(search_query, num_pages=1)
+    except Exception as e:
+        print(f"Live job fetch failed: {e}")
+        live_jobs = get_fallback_mock_jobs()
+        
+    for job_data in live_jobs:
+        # Check if job exists to avoid duplicates
+        existing = db.query(Job).filter(
+            Job.title == job_data["title"], 
+            Job.company == job_data["company"]
+        ).first()
+        
+        if not existing:
             job = Job(**job_data)
             db.add(job)
-        db.commit()
+            
+    db.commit()
 
 
 @router.get("", response_model=List[JobResponse])
@@ -38,17 +51,15 @@ async def get_jobs(
     page_size: int = Query(20, ge=1, le=100),
     location: Optional[str] = None,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user) # Assuming auth required
 ):
     """
     Get all job listings with pagination.
-    
-    - **page**: Page number (default: 1)
-    - **page_size**: Items per page (default: 20, max: 100)
-    - **location**: Filter by location (optional)
     """
-    # Seed jobs if database is empty
-    seed_jobs_if_empty(db)
+    # If DB is empty or very small, fetch some live jobs
+    job_count = db.query(Job).count()
+    if job_count < 10:
+        await ensure_live_jobs(db, "Engineer", location or "")
     
     # Build query
     query = db.query(Job)
@@ -73,16 +84,7 @@ async def get_matched_jobs(
 ):
     """
     Get job listings with AI-calculated match scores.
-    
-    Jobs are ranked by match score (highest first).
-    
-    - **page**: Page number (default: 1)
-    - **page_size**: Items per page (default: 20, max: 100)
-    - **min_score**: Minimum match score filter (default: 0)
     """
-    # Seed jobs if database is empty
-    seed_jobs_if_empty(db)
-    
     # Get user's most recent resume
     resume = db.query(Resume).filter(
         Resume.user_id == current_user.id
@@ -93,14 +95,29 @@ async def get_matched_jobs(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Please upload a resume first to see matched jobs"
         )
+        
+    # Attempt to derive a targeted live job search query from the resume
+    search_query = "Software Engineer"
+    parsed = resume.parsed_data or {}
+    skills = parsed.get("skills", [])
+    if skills:
+        top_skill = skills[0].get("skill_name") if isinstance(skills[0], dict) else skills[0]
+        if top_skill:
+            search_query = f"{top_skill} Developer"
+            
+    # Fetch live jobs to ensure our database has relevant fresh matches
+    # (We could check if we did this recently to save API calls)
+    recent_jobs_count = db.query(Job).filter(Job.title.ilike(f"%{search_query.split()[0]}%")).count()
+    if recent_jobs_count < 5:
+        await ensure_live_jobs(db, search_query)
     
     # Get user preferences
     preferences = db.query(Preference).filter(
         Preference.user_id == current_user.id
     ).first()
     
-    # Get all jobs
-    all_jobs = db.query(Job).all()
+    # Get all jobs (or filter by criteria if DB gets too large)
+    all_jobs = db.query(Job).order_by(Job.posted_at.desc()).limit(100).all()
     
     # Calculate match scores for each job
     matched_jobs = []
@@ -151,7 +168,7 @@ async def get_matched_jobs(
                 "location": job.location,
                 "salary_min": job.salary_min,
                 "salary_max": job.salary_max,
-                "experience_required": job.experience_required,
+                "experience_required": str(job.experience_required) if job.experience_required else None,
                 "required_skills": job.required_skills,
                 "source": job.source,
                 "external_url": job.external_url,
@@ -190,7 +207,12 @@ async def get_job(
             detail="Job not found"
         )
     
-    return job
+    # Quick fix for response model
+    job_resp = job.__dict__.copy()
+    if job_resp.get("experience_required") is not None:
+        job_resp["experience_required"] = str(job_resp["experience_required"])
+        
+    return job_resp
 
 
 @router.post("/{job_id}/save", response_model=SavedJobResponse, status_code=status.HTTP_201_CREATED)
