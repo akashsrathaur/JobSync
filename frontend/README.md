@@ -48,5 +48,4 @@ npm start
 ```
 
 ## Author
-
 **Akash S Rathaur** ([@akashsrathaur](https://github.com/akashsrathaur))
