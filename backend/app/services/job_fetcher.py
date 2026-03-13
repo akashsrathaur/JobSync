@@ -53,8 +53,7 @@ async def fetch_live_jobs(query: str, num_pages: int = 1) -> List[Dict[str, Any]
                     "required_skills": job.get("job_required_skills", []), # Jsearch sometimes provides this
                     "source": "JSearch (Live)",
                     "external_url": job.get("job_apply_link") or job.get("job_city", ""),
-                    "posted_at": job.get("job_posted_at_datetime_utc", datetime.utcnow().isoformat()),
-                    "employer_logo": job.get("employer_logo")
+                    "posted_at": job.get("job_posted_at_datetime_utc", datetime.utcnow().isoformat())
                 })
                 
     except Exception as e:
