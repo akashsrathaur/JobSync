@@ -68,17 +68,69 @@ def get_fallback_sample_job_records() -> List[Dict[str, Any]]:
     """Fallback mock jobs in case the API rate limit is hit or fails."""
     return [
        {
-            "title": "Software Engineer (Fallback)",
-            "company": "TechCorp Inc",
-            "description": "This is a fallback job because the live API failed or ran out of credits. We are seeking an experienced Full Stack Engineer.",
+            "title": "Senior React Developer",
+            "company": "Frontend Masters",
+            "description": "We are seeking an experienced React Developer to lead our new product initiatives. You should have deep knowledge of Next.js, Tailwind, and REST APIs.",
             "location": "Remote",
-            "salary_min": 100000,
-            "salary_max": 150000,
-            "experience_required": "3-5 years",
-            "required_skills": ["Python", "React", "PostgreSQL"],
-            "source": "Mock (API Error)",
-            "external_url": "https://example.com",
+            "salary_min": 120000,
+            "salary_max": 160000,
+            "experience_required": 5,
+            "required_skills": ["React", "Next.js", "TypeScript", "Tailwind CSS"],
+            "source": "Mock (API Quota Reached)",
+            "external_url": "https://linkedin.com/jobs",
             "posted_at": datetime.utcnow() - timedelta(days=1)
+        },
+        {
+            "title": "Backend Python Engineer",
+            "company": "DataFlow Corp",
+            "description": "Join our backend team to build scalable microservices using FastAPI and PostgreSQL. Experience with cloud deployments is a plus.",
+            "location": "New York, NY (Hybrid)",
+            "salary_min": 110000,
+            "salary_max": 145000,
+            "experience_required": 3,
+            "required_skills": ["Python", "FastAPI", "PostgreSQL", "Docker", "AWS"],
+            "source": "Mock (API Quota Reached)",
+            "external_url": "https://indeed.com",
+            "posted_at": datetime.utcnow() - timedelta(hours=5)
+        },
+        {
+            "title": "Full Stack Software Engineer",
+            "company": "Startup Hub",
+            "description": "Looking for a jack-of-all-trades engineer who can build end-to-end features using modern JavaScript frameworks and robust backend databases.",
+            "location": "San Francisco, CA",
+            "salary_min": 130000,
+            "salary_max": 175000,
+            "experience_required": 4,
+            "required_skills": ["JavaScript", "Node.js", "React", "MongoDB"],
+            "source": "Mock (API Quota Reached)",
+            "external_url": "https://glassdoor.com",
+            "posted_at": datetime.utcnow() - timedelta(days=2)
+        },
+        {
+            "title": "Machine Learning Engineer",
+            "company": "AI Visionaries",
+            "description": "Help us build the next generation of predictive models. You'll work closely with data scientists to put models into production securely.",
+            "location": "Seattle, WA",
+            "salary_min": 140000,
+            "salary_max": 190000,
+            "experience_required": 4,
+            "required_skills": ["Python", "PyTorch", "TensorFlow", "MLOps"],
+            "source": "Mock (API Quota Reached)",
+            "external_url": "https://linkedin.com/jobs",
+            "posted_at": datetime.utcnow() - timedelta(minutes=45)
+        },
+        {
+            "title": "DevOps Engineer",
+            "company": "CloudScale Ltd",
+            "description": "We need a DevOps expert to help streamline our CI/CD pipelines, manage Kubernetes clusters, and automate infrastructure deployments.",
+            "location": "Remote",
+            "salary_min": 115000,
+            "salary_max": 155000,
+            "experience_required": 3,
+            "required_skills": ["Kubernetes", "Docker", "CI/CD", "AWS", "Terraform"],
+            "source": "Mock (API Quota Reached)",
+            "external_url": "https://indeed.com",
+            "posted_at": datetime.utcnow() - timedelta(days=3)
         }
     ]
 
