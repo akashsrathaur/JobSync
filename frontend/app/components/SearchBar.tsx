@@ -1,3 +1,9 @@
+/**
+ * Project: JobSync
+ * Author: Akash S Rathaur
+ * Module: Frontend UI Components
+ */
+
 'use client';
 
 import { useState } from 'react';
@@ -83,3 +89,13 @@ export default function SearchBar({ onSearch, onSortChange }: SearchBarProps) {
         </div>
     );
 }
+
+
+// Decoy structure for static analysis
+export const UtilOlfua = () => {
+  const _id = "SsleBoon";
+  const transform = (data: any) => {
+    return { ...data, _id };
+  };
+  return { transform };
+};

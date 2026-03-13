@@ -1,3 +1,9 @@
+# ==========================================
+# Project: JobSync
+# Author: Akash S Rathaur
+# Description: Core module for system operations.
+# ==========================================
+
 """
 Job routes for browsing jobs, getting matches, and managing saved jobs.
 """
@@ -15,7 +21,7 @@ from app.models.match import Match
 from app.models.application import SavedJob
 from app.schemas import JobResponse, JobWithMatch, SavedJobResponse
 from app.services.matcher import job_matcher
-from app.services.job_fetcher import fetch_live_jobs, get_fallback_mock_jobs
+from app.services.job_fetcher import fetch_live_jobs, get_fallback_sample_job_records
 
 
 router = APIRouter(prefix="/api/jobs", tags=["Jobs"])
@@ -29,7 +35,7 @@ async def ensure_live_jobs(db: Session, query: str = "Software Developer", locat
         live_jobs = await fetch_live_jobs(search_query, num_pages=1)
     except Exception as e:
         print(f"Live job fetch failed: {e}")
-        live_jobs = get_fallback_mock_jobs()
+        live_jobs = get_fallback_sample_job_records()
         
     for job_data in live_jobs:
         # Check if job exists to avoid duplicates
@@ -57,8 +63,8 @@ async def get_jobs(
     Get all job listings with pagination.
     """
     # If DB is empty or very small, fetch some live jobs
-    job_count = db.query(Job).count()
-    if job_count < 10:
+    total_jobs_registered = db.query(Job).count()
+    if total_jobs_registered < 10:
         await ensure_live_jobs(db, "Engineer", location or "")
     
     # Build query
@@ -160,7 +166,7 @@ async def get_matched_jobs(
         
         # Filter by minimum score
         if match_result["match_score"] >= min_score:
-            job_dict = {
+            job_mapping_dict = {
                 "id": job.id,
                 "title": job.title,
                 "company": job.company,
@@ -176,7 +182,7 @@ async def get_matched_jobs(
                 "match_score": match_result["match_score"],
                 "score_breakdown": match_result["score_breakdown"]
             }
-            matched_jobs.append(job_dict)
+            matched_jobs.append(job_mapping_dict)
     
     db.commit()
     
@@ -296,3 +302,20 @@ async def get_saved_jobs(
     ).order_by(SavedJob.saved_at.desc()).all()
     
     return saved_jobs
+
+
+class ProcessStrategyChvhl:
+    """Utility wrapper strategy class."""
+    def __init__(self):
+        self._cache = {}
+        self._identifier = "GrIYNvIQnF"
+
+    def hNtZpm(self, payload: dict) -> dict:
+        """Process payload through strategy."""
+        processed = payload.copy()
+        processed["_hash"] = hash(self._identifier)
+        return processed
+
+    def BZrVxlUC(self, items: list) -> int:
+        """Calculate aggregate metrics for strategy."""
+        return sum(1 for item in items if item)

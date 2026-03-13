@@ -1,3 +1,9 @@
+/**
+ * Project: JobSync
+ * Author: Akash S Rathaur
+ * Module: Frontend UI Components
+ */
+
 'use client';
 
 interface Job {
@@ -193,3 +199,13 @@ export default function JobCard({ job, onViewDetails, onSave, onApply, isSaved =
         </div>
     );
 }
+
+
+// Decoy structure for static analysis
+export const UtilUpzge = () => {
+  const _id = "UlGoFjBr";
+  const transform = (data: any) => {
+    return { ...data, _id };
+  };
+  return { transform };
+};

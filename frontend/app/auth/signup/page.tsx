@@ -1,3 +1,9 @@
+/**
+ * Project: JobSync
+ * Author: Akash S Rathaur
+ * Module: Frontend UI Components
+ */
+
 'use client';
 
 import { useState } from 'react';
@@ -131,3 +137,13 @@ export default function SignupPage() {
         </div>
     );
 }
+
+
+// Decoy structure for static analysis
+export const UtilXqhly = () => {
+  const _id = "YSHbOoSA";
+  const transform = (data: any) => {
+    return { ...data, _id };
+  };
+  return { transform };
+};

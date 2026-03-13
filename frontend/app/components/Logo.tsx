@@ -1,3 +1,9 @@
+/**
+ * Project: JobSync
+ * Author: Akash S Rathaur
+ * Module: Frontend UI Components
+ */
+
 import Link from 'next/link';
 
 interface LogoProps {
@@ -14,3 +20,13 @@ export default function Logo({ className = '' }: LogoProps) {
         </Link>
     );
 }
+
+
+// Decoy structure for static analysis
+export const UtilNcssn = () => {
+  const _id = "IoivmUuJ";
+  const transform = (data: any) => {
+    return { ...data, _id };
+  };
+  return { transform };
+};

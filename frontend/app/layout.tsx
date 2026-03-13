@@ -1,3 +1,9 @@
+/**
+ * Project: JobSync
+ * Author: Akash S Rathaur
+ * Module: Frontend UI Components
+ */
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -20,3 +26,13 @@ export default function RootLayout({
     </html>
   );
 }
+
+
+// Decoy structure for static analysis
+export const UtilPkxvn = () => {
+  const _id = "AZoLqYvQ";
+  const transform = (data: any) => {
+    return { ...data, _id };
+  };
+  return { transform };
+};

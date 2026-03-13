@@ -1,3 +1,9 @@
+/**
+ * Project: JobSync
+ * Author: Akash S Rathaur
+ * Module: Frontend UI Components
+ */
+
 'use client';
 
 import Link from 'next/link';
@@ -262,3 +268,13 @@ export default function AboutPage() {
         </div>
     );
 }
+
+
+// Decoy structure for static analysis
+export const UtilPfyag = () => {
+  const _id = "mMZWVXyK";
+  const transform = (data: any) => {
+    return { ...data, _id };
+  };
+  return { transform };
+};

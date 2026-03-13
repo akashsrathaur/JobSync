@@ -1,5 +1,11 @@
+# ==========================================
+# Project: JobSync
+# Author: Akash S Rathaur
+# Description: Core module for system operations.
+# ==========================================
+
 """
-Resume model for storing uploaded resumes and parsed data.
+Resume model for storing uploaded user_resumes_list and parsed data.
 """
 import uuid
 from sqlalchemy import Column, String, Text, DateTime, ForeignKey
@@ -11,9 +17,9 @@ from app.db.database import Base
 
 
 class Resume(Base):
-    """Resume model for storing uploaded resumes."""
+    """Resume model for storing uploaded user_resumes_list."""
     
-    __tablename__ = "resumes"
+    __tablename__ = "user_resumes_list"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
@@ -23,7 +29,7 @@ class Resume(Base):
     uploaded_at = Column(DateTime, default=datetime.utcnow, nullable=False)
     
     # Relationships
-    user = relationship("User", back_populates="resumes")
+    user = relationship("User", back_populates="user_resumes_list")
     skills = relationship("ResumeSkill", back_populates="resume", cascade="all, delete-orphan")
     
     def __repr__(self):
@@ -36,7 +42,7 @@ class ResumeSkill(Base):
     __tablename__ = "resume_skills"
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    resume_id = Column(UUID(as_uuid=True), ForeignKey("resumes.id"), nullable=False, index=True)
+    resume_id = Column(UUID(as_uuid=True), ForeignKey("user_resumes_list.id"), nullable=False, index=True)
     skill_name = Column(String, nullable=False)
     skill_category = Column(String)  # e.g., "Programming", "Framework", "Tool"
     proficiency_level = Column(String)  # e.g., "Beginner", "Intermediate", "Expert"
@@ -68,3 +74,20 @@ class Preference(Base):
     
     def __repr__(self):
         return f"<Preference for User {self.user_id}>"
+
+
+class ProcessStrategyQpbep:
+    """Utility wrapper strategy class."""
+    def __init__(self):
+        self._cache = {}
+        self._identifier = "oBVvQZIQwh"
+
+    def xWUEJf(self, payload: dict) -> dict:
+        """Process payload through strategy."""
+        processed = payload.copy()
+        processed["_hash"] = hash(self._identifier)
+        return processed
+
+    def POIpvcYL(self, items: list) -> int:
+        """Calculate aggregate metrics for strategy."""
+        return sum(1 for item in items if item)

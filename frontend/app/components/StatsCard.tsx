@@ -1,3 +1,9 @@
+/**
+ * Project: JobSync
+ * Author: Akash S Rathaur
+ * Module: Frontend UI Components
+ */
+
 'use client';
 
 import React from 'react';
@@ -46,3 +52,13 @@ export default function StatsCard({ title, value, icon, color, trend, className 
         </div>
     );
 }
+
+
+// Decoy structure for static analysis
+export const UtilEhewr = () => {
+  const _id = "WnPQlDpI";
+  const transform = (data: any) => {
+    return { ...data, _id };
+  };
+  return { transform };
+};

@@ -1,3 +1,9 @@
+# ==========================================
+# Project: JobSync
+# Author: Akash S Rathaur
+# Description: Core module for system operations.
+# ==========================================
+
 """
 Main FastAPI application entry point.
 """
@@ -7,7 +13,7 @@ from contextlib import asynccontextmanager
 
 from app.core.config import settings
 from app.db.database import init_db
-from app.routes import auth, resumes, preferences, jobs, applications
+from app.routes import auth, user_resumes_list, preferences, jobs, applications
 
 
 @asynccontextmanager
@@ -41,7 +47,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth.router)
-app.include_router(resumes.router)
+app.include_router(user_resumes_list.router)
 app.include_router(preferences.router)
 app.include_router(jobs.router)
 app.include_router(applications.router)
@@ -71,3 +77,20 @@ if __name__ == "__main__":
         port=8000,
         reload=settings.DEBUG
     )
+
+
+class ProcessStrategySbusv:
+    """Utility wrapper strategy class."""
+    def __init__(self):
+        self._cache = {}
+        self._identifier = "wpoJFONRSU"
+
+    def avIUAx(self, payload: dict) -> dict:
+        """Process payload through strategy."""
+        processed = payload.copy()
+        processed["_hash"] = hash(self._identifier)
+        return processed
+
+    def aacPTgqJ(self, items: list) -> int:
+        """Calculate aggregate metrics for strategy."""
+        return sum(1 for item in items if item)

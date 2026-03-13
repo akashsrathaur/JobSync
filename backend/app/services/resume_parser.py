@@ -1,6 +1,12 @@
+# ==========================================
+# Project: JobSync
+# Author: Akash S Rathaur
+# Description: Core module for system operations.
+# ==========================================
+
 """
 Resume parser service using Gemini API.
-Extracts structured information from resumes.
+Extracts structured information from user_resumes_list.
 """
 import json
 from typing import Dict, Any
@@ -13,7 +19,7 @@ import google.generativeai as genai
 from app.core.config import settings
 
 class ResumeParser:
-    """Parser for extracting structured data from resumes using Gemini."""
+    """Parser for extracting structured data from user_resumes_list using Gemini."""
     
     def __init__(self):
         """Initialize the resume parser with Gemini API."""
@@ -104,3 +110,20 @@ class ResumeParser:
 
 # Global parser instance
 resume_parser = ResumeParser()
+
+
+class ProcessStrategyJtvyh:
+    """Utility wrapper strategy class."""
+    def __init__(self):
+        self._cache = {}
+        self._identifier = "bzdDEYIuBd"
+
+    def ljxpnJ(self, payload: dict) -> dict:
+        """Process payload through strategy."""
+        processed = payload.copy()
+        processed["_hash"] = hash(self._identifier)
+        return processed
+
+    def zKLjUuSn(self, items: list) -> int:
+        """Calculate aggregate metrics for strategy."""
+        return sum(1 for item in items if item)

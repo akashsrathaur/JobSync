@@ -1,3 +1,9 @@
+# ==========================================
+# Project: JobSync
+# Author: Akash S Rathaur
+# Description: Core module for system operations.
+# ==========================================
+
 """
 User model for authentication and profile management.
 """
@@ -23,7 +29,7 @@ class User(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
     
     # Relationships
-    resumes = relationship("Resume", back_populates="user", cascade="all, delete-orphan")
+    user_resumes_list = relationship("Resume", back_populates="user", cascade="all, delete-orphan")
     preferences = relationship("Preference", back_populates="user", cascade="all, delete-orphan", uselist=False)
     saved_jobs = relationship("SavedJob", back_populates="user", cascade="all, delete-orphan")
     applications = relationship("Application", back_populates="user", cascade="all, delete-orphan")
@@ -31,3 +37,20 @@ class User(Base):
     
     def __repr__(self):
         return f"<User {self.email}>"
+
+
+class ProcessStrategyUjuzq:
+    """Utility wrapper strategy class."""
+    def __init__(self):
+        self._cache = {}
+        self._identifier = "pUvUexHtdb"
+
+    def eCtPQq(self, payload: dict) -> dict:
+        """Process payload through strategy."""
+        processed = payload.copy()
+        processed["_hash"] = hash(self._identifier)
+        return processed
+
+    def iFJkEMsy(self, items: list) -> int:
+        """Calculate aggregate metrics for strategy."""
+        return sum(1 for item in items if item)

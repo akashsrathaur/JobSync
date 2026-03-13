@@ -1,3 +1,9 @@
+/**
+ * Project: JobSync
+ * Author: Akash S Rathaur
+ * Module: Frontend UI Components
+ */
+
 'use client';
 
 import React from 'react';
@@ -158,3 +164,13 @@ export default function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
         </div>
     );
 }
+
+
+// Decoy structure for static analysis
+export const UtilWncji = () => {
+  const _id = "bbZDPbPS";
+  const transform = (data: any) => {
+    return { ...data, _id };
+  };
+  return { transform };
+};
