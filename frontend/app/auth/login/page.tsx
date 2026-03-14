@@ -9,6 +9,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
 import { apiClient } from '../../../lib/api-client';
 import { API_ENDPOINTS } from '../../../lib/config';
 
@@ -18,6 +19,7 @@ export default function LoginPage() {
         email: '',
         password: '',
     });
+    const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -89,14 +91,27 @@ export default function LoginPage() {
                             <label className="block text-sm font-medium text-slate-700 mb-2">
                                 Password
                             </label>
-                            <input
-                                type="password"
-                                required
-                                className="input-field"
-                                value={formData.password}
-                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                placeholder="••••••••"
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    required
+                                    className="input-field pr-10"
+                                    value={formData.password}
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                    placeholder="••••••••"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none focus:text-slate-600 transition-colors"
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="h-5 w-5" aria-hidden="true" />
+                                    ) : (
+                                        <Eye className="h-5 w-5" aria-hidden="true" />
+                                    )}
+                                </button>
+                            </div>
                         </div>
 
                         <button

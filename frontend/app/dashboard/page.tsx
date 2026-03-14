@@ -52,6 +52,15 @@ export default function DashboardPage() {
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('best_match');
 
+    const [activeFilters, setActiveFilters] = useState({
+        location: '',
+        salaryMax: 200000,
+        experienceLevel: [] as string[],
+        jobType: [] as string[],
+        datePosted: 'any'
+    });
+    const [appliedJobs, setAppliedJobs] = useState<Set<string>>(new Set());
+
     useEffect(() => {
         checkAuth();
         loadJobs();
@@ -61,7 +70,7 @@ export default function DashboardPage() {
     useEffect(() => {
         filterAndSortJobs();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [jobs, searchQuery, sortBy]);
+    }, [jobs, searchQuery, sortBy, activeFilters]);
 
     const checkAuth = () => {
         const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
@@ -123,13 +132,27 @@ export default function DashboardPage() {
             );
         }
 
+        // Sidebar Filters
+        if (activeFilters.location) {
+            filtered = filtered.filter(job => 
+                job.location.toLowerCase().includes(activeFilters.location.toLowerCase())
+            );
+        }
+        
+        if (activeFilters.salaryMax < 200000) { // If slider is moved from max
+            filtered = filtered.filter(job => 
+                ((job.salary_max || 0) / 100000) <= (activeFilters.salaryMax / 100000)
+            );
+        }
+
         // Sort
         switch (sortBy) {
             case 'best_match':
                 filtered.sort((a, b) => (b.match_score || 0) - (a.match_score || 0));
                 break;
             case 'newest':
-                // Would sort by date if available
+                // Keeping newest as best match for static fallback
+                filtered.sort((a, b) => (b.match_score || 0) - (a.match_score || 0));
                 break;
             case 'salary_high':
                 filtered.sort((a, b) => (b.salary_max || 0) - (a.salary_max || 0));
@@ -165,6 +188,13 @@ export default function DashboardPage() {
     };
 
     const handleApply = (jobId: string) => {
+        // Optimistically set applied state
+        setAppliedJobs(prev => {
+            const newSet = new Set(prev);
+            newSet.add(jobId);
+            return newSet;
+        });
+        
         const job = jobs.find(j => j.id === jobId);
         if (job && job.url) {
             window.open(job.url, '_blank', 'noopener,noreferrer');
@@ -174,9 +204,8 @@ export default function DashboardPage() {
         }
     };
 
-    const handleFilterChange = (filters: unknown) => {
-        console.log('Filters changed:', filters);
-        // Would apply filters to jobs list
+    const handleFilterChange = (filters: any) => {
+        setActiveFilters(filters);
     };
 
     return (
@@ -288,9 +317,24 @@ export default function DashboardPage() {
                             {/* Jobs List */}
                             <div className="lg:col-span-3">
                                 {loading ? (
-                                    <div className="text-center py-20">
-                                        <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent"></div>
-                                        <p className="mt-4 text-slate-600 font-medium">Finding your perfect matches...</p>
+                                    <div className="text-center py-20 px-4 glass-card mt-8">
+                                        <div className="inline-block relative w-20 h-20 mb-6">
+                                            <div className="absolute inset-0 rounded-full border-4 border-slate-100/50 flex items-center justify-center">
+                                                <div className="text-3xl animate-pulse">🤖</div>
+                                            </div>
+                                            <div className="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+                                        </div>
+                                        <h2 className="text-2xl font-bold text-slate-800 mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 animate-pulse">
+                                            Finding your perfect matches...
+                                        </h2>
+                                        <p className="text-slate-500 mb-4 max-w-sm mx-auto">
+                                            Our AI is scanning thousands of live job postings to find roles that perfectly align with your extracted skills.
+                                        </p>
+                                        <div className="flex justify-center gap-2 mt-4">
+                                            <span className="w-2 h-2 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                            <span className="w-2 h-2 rounded-full bg-blue-500 animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                            <span className="w-2 h-2 rounded-full bg-blue-600 animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                                        </div>
                                     </div>
                                 ) : filteredJobs.length === 0 ? (
                                     <div className="text-center py-20 glass-card">
@@ -316,6 +360,7 @@ export default function DashboardPage() {
                                                 onSave={handleSaveJob}
                                                 onApply={handleApply}
                                                 isSaved={savedJobs.has(job.id)}
+                                                isApplied={appliedJobs.has(job.id)}
                                             />
                                         ))}
                                     </div>

@@ -33,9 +33,10 @@ interface JobCardProps {
     onSave: (jobId: string) => void;
     onApply: (jobId: string) => void;
     isSaved?: boolean;
+    isApplied?: boolean;
 }
 
-export default function JobCard({ job, onViewDetails, onSave, onApply, isSaved = false }: JobCardProps) {
+export default function JobCard({ job, onViewDetails, onSave, onApply, isSaved = false, isApplied = false }: JobCardProps) {
     const getScoreClass = (score: number) => {
         if (score >= 80) return 'score-excellent';
         if (score >= 60) return 'score-good';
@@ -191,9 +192,14 @@ export default function JobCard({ job, onViewDetails, onSave, onApply, isSaved =
                 </button>
                 <button
                     onClick={() => onApply(job.id)}
-                    className="flex-1 btn-primary py-3 rounded-xl shadow-lg shadow-blue-500/20"
+                    disabled={isApplied}
+                    className={`flex-1 py-3 rounded-xl shadow-lg transition-all duration-300 font-bold ${
+                        isApplied 
+                        ? 'bg-emerald-500 text-white shadow-emerald-500/20 cursor-not-allowed' 
+                        : 'btn-primary shadow-blue-500/20 hover:-translate-y-0.5'
+                    }`}
                 >
-                    Apply
+                    {isApplied ? 'Applied ✓' : 'Apply Now'}
                 </button>
             </div>
         </div>

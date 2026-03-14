@@ -8,6 +8,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Menu,
   X,
@@ -22,6 +23,17 @@ import Logo from './components/Logo';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+
+  const handleCTAClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+    if (token) {
+      router.push('/dashboard');
+    } else {
+      router.push('/auth/signup');
+    }
+  };
 
   // We keep existing state/data for sections further down or logos needed
   const floatingLogos = [
@@ -59,12 +71,12 @@ export default function Home() {
 
             {/* Auth Buttons */}
             <div className="hidden md:flex items-center gap-4">
-              <Link
-                href="/auth/signup"
+              <button
+                onClick={handleCTAClick}
                 className="px-6 py-2 rounded-full border border-slate-200 text-slate-700 font-bold hover:border-blue-500 hover:text-blue-500 transition-all text-sm"
               >
                 Find jobs now
-              </Link>
+              </button>
             </div>
 
             {/* Mobile Menu Button */}
@@ -121,12 +133,12 @@ export default function Home() {
             </p>
 
             <div className="flex justify-center">
-              <Link
-                href="/auth/signup"
+              <button
+                onClick={handleCTAClick}
                 className="btn-primary text-lg shadow-[0_4px_14px_0_rgba(14,165,233,0.39)] hover:shadow-[0_6px_20px_rgba(14,165,233,0.23)] border border-blue-400/50"
               >
                 Find your first job
-              </Link>
+              </button>
             </div>
 
             <div className="mt-8 flex items-center justify-center gap-2 text-sm text-slate-500">
@@ -332,9 +344,9 @@ export default function Home() {
                 </li>
               </ul>
 
-              <Link href="/auth/signup" className="btn-primary inline-flex items-center gap-2 text-lg">
+              <button onClick={handleCTAClick} className="btn-primary inline-flex items-center gap-2 text-lg">
                 Find your job now
-              </Link>
+              </button>
             </div>
 
             <div className="relative">
@@ -482,9 +494,9 @@ export default function Home() {
             No more endless searching.<br /> Get relevant jobs <span className="text-blue-500">delivered</span>.
           </h2>
           <div className="mt-8 flex justify-center">
-            <Link href="/auth/signup" className="btn-primary text-xl px-10 py-4 shadow-[0_0_40px_rgba(0,255,136,0.3)]">
+            <button onClick={handleCTAClick} className="btn-primary text-xl px-10 py-4 shadow-[0_0_40px_rgba(0,255,136,0.3)]">
               Start your free trial
-            </Link>
+            </button>
           </div>
         </div>
       </section>

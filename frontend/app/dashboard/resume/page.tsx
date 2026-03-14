@@ -106,6 +106,34 @@ export default function ResumePage() {
                                 <h2 className="text-2xl font-bold text-blue-600 mb-2">Resume Uploaded!</h2>
                                 <p className="text-slate-600">Redirecting to your matches...</p>
                             </div>
+                        ) : uploading ? (
+                            <div className="text-center py-16 px-4">
+                                <div className="inline-block relative w-24 h-24 mb-8">
+                                    <div className="absolute inset-0 rounded-full border-4 border-slate-100 flex items-center justify-center">
+                                         <div className="text-4xl animate-pulse">📄</div>
+                                    </div>
+                                    <div className="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent animate-[spin_1s_linear_infinite]"></div>
+                                </div>
+                                <h2 className="text-2xl font-bold text-slate-800 mb-3 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 animate-pulse">
+                                    AI is analyzing your resume...
+                                </h2>
+                                <p className="text-slate-500 mb-8 max-w-sm mx-auto">Please wait while we extract your skills, experience, and parse your profile data.</p>
+                                
+                                <div className="max-w-xs mx-auto space-y-4 text-sm font-medium text-slate-600 text-left bg-slate-50 p-6 rounded-xl border border-slate-100 shadow-sm">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-4 h-4 rounded-full border-2 border-blue-500 border-t-transparent animate-spin"></div> 
+                                        <span>Scanning document structure</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 opacity-70">
+                                        <div className="w-4 h-4 rounded-full border-2 border-indigo-400 border-t-transparent animate-[spin_2s_linear_infinite_reverse]"></div> 
+                                        <span>Extracting key technologies</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 opacity-40">
+                                        <div className="w-4 h-4 rounded-full border-2 border-sky-400 border-t-transparent animate-[spin_1.5s_linear_infinite]"></div> 
+                                        <span>Generating semantic profile</span>
+                                    </div>
+                                </div>
+                            </div>
                         ) : (
                             <>
                                 <div className="border-2 border-dashed border-slate-300 rounded-lg p-12 text-center hover:border-blue-400 transition-colors">

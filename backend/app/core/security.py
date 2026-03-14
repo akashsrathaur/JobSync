@@ -20,8 +20,8 @@ from app.db.database import get_db
 from app.models.user import User
 
 
-# Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Password hashing context (lowered rounds for faster demo logins)
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=4)
 
 # HTTP Bearer token scheme
 security = HTTPBearer()
