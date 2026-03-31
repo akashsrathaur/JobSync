@@ -58,7 +58,6 @@ The application is structured into a modern dual-stack architecture:
    ```bash
    npm run dev
    ```
-
 ## API Reference
 
 When running the backend server locally, comprehensive interactive API documentation is automatically generated and accessible at:

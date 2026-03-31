@@ -10,6 +10,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 import { apiClient } from '../../../lib/api-client';
 import { API_ENDPOINTS } from '../../../lib/config';
 
@@ -48,6 +49,35 @@ export default function LoginPage() {
                 setError(err.message);
             } else {
                 setError('An error occurred');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGoogleSuccess = async (credentialResponse: unknown) => {
+        try {
+            setLoading(true);
+            setError('');
+            const response = await fetch(API_ENDPOINTS.googleAuth, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ credential: (credentialResponse as { credential?: string }).credential })
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.detail || 'Google Login failed');
+            }
+
+            const data = await response.json();
+            apiClient.setTokens(data.access_token, data.refresh_token);
+            router.push('/dashboard');
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('An error occurred during Google Login');
             }
         } finally {
             setLoading(false);
@@ -122,6 +152,22 @@ export default function LoginPage() {
                             {loading ? 'Logging in...' : 'Log In'}
                         </button>
                     </form>
+
+                    <div className="mt-4 flex flex-col items-center">
+                        <div className="relative w-full my-4">
+                            <div className="absolute inset-0 flex items-center">
+                                <span className="w-full border-t border-slate-200" />
+                            </div>
+                            <div className="relative flex justify-center text-sm">
+                                <span className="px-2 bg-white/50 text-slate-500 rounded-lg">Or continue with</span>
+                            </div>
+                        </div>
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={() => setError('Google Login Failed')}
+                            useOneTap
+                        />
+                    </div>
 
                     <div className="mt-6 text-center text-sm text-slate-600">
                         Don&apos;t have an account?{' '}

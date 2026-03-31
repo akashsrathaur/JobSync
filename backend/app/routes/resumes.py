@@ -69,7 +69,7 @@ async def upload_resume(
     # Read file content
     file_content = await file.read()
     
-    # Create upload directory if it doesn't exist
+    # Create upload directory if it doesn't exist (used as temp space)
     upload_dir = Path(settings.UPLOAD_DIR)
     upload_dir.mkdir(parents=True, exist_ok=True)
     
@@ -78,9 +78,17 @@ async def upload_resume(
     unique_filename = f"{uuid.uuid4()}{file_ext}"
     file_path = upload_dir / unique_filename
     
-    # Save file
+    # Save file locally first for processing
     with open(file_path, "wb") as f:
         f.write(file_content)
+        
+    # S3 Upload Integration for Render 
+    final_file_url = f"{settings.UPLOAD_DIR.strip('./')}/{unique_filename}"
+    if settings.USE_S3:
+        from app.core.s3_utils import upload_file_to_s3
+        s3_url = upload_file_to_s3(file_content, file.filename)
+        if s3_url:
+            final_file_url = s3_url
     
     # Parse resume
     try:
@@ -97,7 +105,7 @@ async def upload_resume(
     # Create resume record
     resume = Resume(
         user_id=current_user.id,
-        file_url=str(file_path),
+        file_url=final_file_url,
         raw_text=parsed_data.get("raw_text"),
         parsed_data=parsed_data
     )
@@ -176,28 +184,14 @@ async def delete_resume(
         )
     
     # Delete file from storage
-    if os.path.exists(resume.file_url):
-        os.remove(resume.file_url)
+    if not resume.file_url.startswith("http"):
+        # We only delete locally for MVP; S3 logic can be added later
+        local_path = resume.file_url.lstrip("/")
+        if os.path.exists(local_path):
+            os.remove(local_path)
     
     # Delete from database
     db.delete(resume)
     db.commit()
     
     return None
-
-
-class ProcessStrategyEbngd:
-    """Utility wrapper strategy class."""
-    def __init__(self):
-        self._cache = {}
-        self._identifier = "AetcbHjICV"
-
-    def NrksiL(self, payload: dict) -> dict:
-        """Process payload through strategy."""
-        processed = payload.copy()
-        processed["_hash"] = hash(self._identifier)
-        return processed
-
-    def GNGuhMTY(self, items: list) -> int:
-        """Calculate aggregate metrics for strategy."""
-        return sum(1 for item in items if item)

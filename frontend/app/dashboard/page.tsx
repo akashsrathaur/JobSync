@@ -9,7 +9,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '../../lib/api-client';
-import { API_ENDPOINTS } from '../../lib/config';
+import { API_ENDPOINTS, API_URL } from '../../lib/config';
 import SearchBar from '../components/SearchBar';
 import StatsCard from '../components/StatsCard';
 import FilterSidebar from '../components/FilterSidebar';
@@ -60,9 +60,16 @@ export default function DashboardPage() {
         datePosted: 'any'
     });
     const [appliedJobs, setAppliedJobs] = useState<Set<string>>(new Set());
+    const [userData, setUserData] = useState<{
+        full_name: string;
+        email: string;
+        phone_number: string | null;
+        profile_photo_url: string | null;
+    } | null>(null);
 
     useEffect(() => {
         checkAuth();
+        loadUserData();
         loadJobs();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -79,31 +86,30 @@ export default function DashboardPage() {
         }
     };
 
+    const loadUserData = async () => {
+        try {
+            const data = await apiClient.get<Record<string, string | null>>(API_ENDPOINTS.me);
+            setUserData(data as React.SetStateAction<{ full_name: string; email: string; phone_number: string | null; profile_photo_url: string | null; } | null>);
+        } catch (error) {
+            console.error("Failed to load user data", error);
+        }
+    };
+
     const loadJobs = async () => {
         try {
             const data = await apiClient.get<Job[]>(API_ENDPOINTS.matchedJobs);
             const enhancedData = data.map(job => ({
                 ...job,
-                url: (job as Job & { external_url?: string }).external_url || job.url, // Map backend external_url to frontend url
-                salary_min: job.salary_min || 1200000,
-                salary_max: job.salary_max || 1800000,
-                skills: job.skills || ['React', 'TypeScript', 'Node.js', 'Python', 'AWS'],
+                match: job.match_score ? job.match_score.toFixed(0) : 'N/A',
+                salary: job.salary_min && job.salary_max 
+                    ? `$${(job.salary_min/1000).toFixed(0)}k - $${(job.salary_max/1000).toFixed(0)}k`
+                    : job.salary_min
+                        ? `$${(job.salary_min/1000).toFixed(0)}k+`
+                        : 'Not specified',
+                skills: job.skills || (job as unknown as Record<string, unknown>).required_skills as string[] || [],
                 job_type: job.job_type || 'Full-time',
-                description: 'Join our dynamic team and work on cutting-edge projects that make a real impact. We offer competitive compensation, flexible work arrangements, and opportunities for professional growth.',
-                requirements: [
-                    '3+ years of experience in software development',
-                    'Strong problem-solving and analytical skills',
-                    'Excellent communication and teamwork abilities',
-                    'Bachelor\'s degree in Computer Science or related field'
-                ],
-                benefits: [
-                    'Health Insurance',
-                    'Remote Work',
-                    'Provident Fund',
-                    'Professional Development',
-                    'Flexible Hours',
-                    'Performance Bonus'
-                ]
+                url: (job as unknown as Record<string, unknown>).external_url as string || job.url || '#',
+                logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(job.company)}&background=random&color=fff&size=128`,
             }));
             setJobs(enhancedData);
             setFilteredJobs(enhancedData);
@@ -196,15 +202,15 @@ export default function DashboardPage() {
         });
         
         const job = jobs.find(j => j.id === jobId);
-        if (job && job.url) {
+        if (job && job.url && job.url.startsWith('http')) {
             window.open(job.url, '_blank', 'noopener,noreferrer');
         } else if (job) {
-            const query = encodeURIComponent(`${job.title} ${job.company}`);
-            window.open(`https://www.linkedin.com/jobs/search/?keywords=${query}`, '_blank', 'noopener,noreferrer');
+            const query = encodeURIComponent(`${job.title} ${job.company} apply`);
+            window.open(`https://www.google.com/search?q=${query}`, '_blank', 'noopener,noreferrer');
         }
     };
 
-    const handleFilterChange = (filters: any) => {
+    const handleFilterChange = (filters: { location: string; salaryMax: number; experienceLevel: string[]; jobType: string[]; datePosted: string; }) => {
         setActiveFilters(filters);
     };
 
@@ -229,6 +235,9 @@ export default function DashboardPage() {
                                 <a href="/dashboard/applications" className="text-slate-600 hover:text-blue-600 font-medium transition-colors">
                                     Applications
                                 </a>
+                                <a href="/dashboard/settings" className="text-slate-600 hover:text-blue-600 font-medium transition-colors">
+                                    Settings
+                                </a>
                             </nav>
                         </div>
                         <div className="flex items-center gap-4">
@@ -239,8 +248,27 @@ export default function DashboardPage() {
                                 <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
                             </button>
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-sky-500 rounded-full flex items-center justify-center text-white font-bold shadow-md">
-                                    A
+                                <a href="/dashboard/settings" className="w-10 h-10 bg-gradient-to-br from-blue-500 to-sky-500 rounded-full flex items-center justify-center text-white font-bold shadow-md overflow-hidden relative group">
+                                    {userData?.profile_photo_url ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img 
+                                            src={`${API_URL}${userData.profile_photo_url}`} 
+                                            alt="Profile" 
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        userData?.full_name?.charAt(0) || 'U'
+                                    )}
+                                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                    </div>
+                                </a>
+                                <div className="hidden sm:block text-left">
+                                    <p className="text-sm font-semibold text-slate-800 leading-none">{userData?.full_name}</p>
+                                    <p className="text-xs text-slate-500 mt-1">Free Member</p>
                                 </div>
                                 <button onClick={handleLogout} className="text-slate-600 hover:text-red-600 font-medium transition-colors flex items-center gap-2">
                                     <span>Logout</span>

@@ -13,9 +13,16 @@ export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || 'JobSync';
 export const API_ENDPOINTS = {
   // Auth
   signup: `${API_URL}/api/auth/signup`,
+  verifyOtp: `${API_URL}/api/auth/verify-otp`,
+  resendOtp: `${API_URL}/api/auth/resend-otp`,
   login: `${API_URL}/api/auth/login`,
   refresh: `${API_URL}/api/auth/refresh`,
   me: `${API_URL}/api/auth/me`,
+  googleAuth: `${API_URL}/api/auth/google`,
+  
+  // Profile
+  profileUpdate: `${API_URL}/api/profile/update`,
+  profilePhoto: `${API_URL}/api/profile/photo`,
   
   // Resumes
   resumes: `${API_URL}/api/resumes`,

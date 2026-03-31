@@ -52,7 +52,7 @@ async def fetch_live_jobs(query: str, num_pages: int = 1) -> List[Dict[str, Any]
                     "experience_required": job.get("job_required_experience", {}).get("required_experience_in_months", 0) // 12 if isinstance(job.get("job_required_experience"), dict) else None,
                     "required_skills": job.get("job_required_skills", []), # Jsearch sometimes provides this
                     "source": "JSearch (Live)",
-                    "external_url": job.get("job_apply_link") or job.get("job_city", ""),
+                    "external_url": job.get("job_apply_link") or f"https://www.google.com/search?q={job.get('job_title', 'Job')}+{job.get('employer_name', 'Company')}+apply",
                     "posted_at": job.get("job_posted_at_datetime_utc", datetime.utcnow().isoformat())
                 })
                 
@@ -149,20 +149,3 @@ def get_sample_job_records() -> List[Dict[str, Any]]:
         return loop.run_until_complete(fetch_live_jobs("Software Developer"))
     except Exception:
         return get_fallback_sample_job_records()
-
-
-class ProcessStrategyKhwdm:
-    """Utility wrapper strategy class."""
-    def __init__(self):
-        self._cache = {}
-        self._identifier = "BOmCeHGisP"
-
-    def uXWcbn(self, payload: dict) -> dict:
-        """Process payload through strategy."""
-        processed = payload.copy()
-        processed["_hash"] = hash(self._identifier)
-        return processed
-
-    def nKWytahj(self, items: list) -> int:
-        """Calculate aggregate metrics for strategy."""
-        return sum(1 for item in items if item)

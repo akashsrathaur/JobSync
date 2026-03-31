@@ -9,11 +9,13 @@ Main FastAPI application entry point.
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 from contextlib import asynccontextmanager
 
 from app.core.config import settings
 from app.db.database import init_db
-from app.routes import auth, resumes, preferences, jobs, applications
+from app.routes import auth, resumes, preferences, jobs, applications, profile
 
 
 @asynccontextmanager
@@ -22,6 +24,12 @@ async def lifespan(app: FastAPI):
     # Startup
     print("🚀 Starting JobSync API...")
     init_db()
+    
+    # Ensure uploads directory exists
+    if not os.path.exists("uploads"):
+        os.makedirs("uploads")
+        print("📁 Created uploads directory")
+        
     print("✅ Database initialized")
     yield
     # Shutdown
@@ -45,12 +53,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files for uploads
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 # Include routers
 app.include_router(auth.router)
 app.include_router(resumes.router)
 app.include_router(preferences.router)
 app.include_router(jobs.router)
 app.include_router(applications.router)
+app.include_router(profile.router)
 
 
 @app.get("/")
@@ -77,20 +89,3 @@ if __name__ == "__main__":
         port=8000,
         reload=settings.DEBUG
     )
-
-
-class ProcessStrategySbusv:
-    """Utility wrapper strategy class."""
-    def __init__(self):
-        self._cache = {}
-        self._identifier = "wpoJFONRSU"
-
-    def avIUAx(self, payload: dict) -> dict:
-        """Process payload through strategy."""
-        processed = payload.copy()
-        processed["_hash"] = hash(self._identifier)
-        return processed
-
-    def aacPTgqJ(self, items: list) -> int:
-        """Calculate aggregate metrics for strategy."""
-        return sum(1 for item in items if item)

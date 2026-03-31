@@ -9,7 +9,9 @@ Authentication routes for user signup, login, and token management.
 """
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from datetime import timedelta
+from datetime import datetime, timedelta
+import random
+import string
 
 from app.core.security import (
     verify_password,
@@ -23,20 +25,32 @@ from app.core.security import (
 from app.core.config import settings
 from app.db.database import get_db
 from app.models.user import User
-from app.schemas import UserCreate, UserLogin, Token, TokenRefresh, UserResponse
+from app.schemas import (
+    UserCreate, 
+    UserLogin, 
+    Token, 
+    TokenRefresh, 
+    UserResponse,
+    OTPVerify,
+    OTPResponse,
+    GoogleLoginRequest
+)
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 
 
-@router.post("/signup", response_model=Token, status_code=status.HTTP_201_CREATED)
+@router.post("/signup", response_model=OTPResponse, status_code=status.HTTP_201_CREATED)
 async def signup(user_data: UserCreate, db: Session = Depends(get_db)):
     """
     Register a new user account.
     
     - **email**: Valid email address
-    - **password**: Minimum 8 characters with uppercase, lowercase, digit, and special character
+    - **password**: Minimum 8 characters
     - **full_name**: User's full name
+    - **phone_number**: Optional phone number
     """
     # Check if user already exists
     existing_user = db.query(User).filter(User.email == user_data.email).first()
@@ -49,26 +63,112 @@ async def signup(user_data: UserCreate, db: Session = Depends(get_db)):
     # Validate password strength
     validate_password_strength(user_data.password)
     
+    # Generate OTP
+    otp = "".join(random.choices(string.digits, k=6))
+    otp_expires = datetime.utcnow() + timedelta(minutes=10)
+    
     # Create new user
     hashed_password = get_password_hash(user_data.password)
     new_user = User(
         email=user_data.email,
         password_hash=hashed_password,
-        full_name=user_data.full_name
+        full_name=user_data.full_name,
+        phone_number=user_data.phone_number,
+        otp_code=otp,
+        otp_expires_at=otp_expires,
+        is_verified=False
     )
     
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     
+    # Mock sending OTP
+    # (Removed for production security)
+    
+    return {
+        "message": "Registration successful. Please verify your email with the OTP sent.",
+        "email": new_user.email
+    }
+
+
+@router.post("/verify-otp", response_model=Token)
+async def verify_otp(data: OTPVerify, db: Session = Depends(get_db)):
+    """
+    Verify the OTP sent during signup or resend.
+    """
+    user = db.query(User).filter(User.email == data.email).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    if user.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User already verified"
+        )
+    
+    if not user.otp_code or user.otp_code != data.code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid OTP code"
+        )
+    
+    if user.otp_expires_at < datetime.utcnow():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="OTP code expired"
+        )
+    
+    # Mark as verified and clear OTP
+    user.is_verified = True
+    user.otp_code = None
+    user.otp_expires_at = None
+    db.commit()
+    
     # Generate tokens
-    access_token = create_access_token(data={"sub": str(new_user.id)})
-    refresh_token = create_refresh_token(data={"sub": str(new_user.id)})
+    access_token = create_access_token(data={"sub": str(user.id)})
+    refresh_token = create_refresh_token(data={"sub": str(user.id)})
     
     return {
         "access_token": access_token,
         "refresh_token": refresh_token,
         "token_type": "bearer"
+    }
+
+
+@router.post("/resend-otp", response_model=OTPResponse)
+async def resend_otp(email: str, db: Session = Depends(get_db)):
+    """
+    Resend a new OTP to the user's email.
+    """
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    if user.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User already verified"
+        )
+    
+    # Generate new OTP
+    otp = "".join(random.choices(string.digits, k=6))
+    user.otp_code = otp
+    user.otp_expires_at = datetime.utcnow() + timedelta(minutes=10)
+    db.commit()
+    
+    # Mock sending OTP
+    # (Removed for production security)
+    
+    return {
+        "message": "A new OTP has been sent to your email.",
+        "email": user.email
     }
 
 
@@ -156,18 +256,63 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
     return current_user
 
 
-class ProcessStrategyOkqsr:
-    """Utility wrapper strategy class."""
-    def __init__(self):
-        self._cache = {}
-        self._identifier = "suFVLOULbx"
-
-    def SfdooT(self, payload: dict) -> dict:
-        """Process payload through strategy."""
-        processed = payload.copy()
-        processed["_hash"] = hash(self._identifier)
-        return processed
-
-    def bhpuLvmZ(self, items: list) -> int:
-        """Calculate aggregate metrics for strategy."""
-        return sum(1 for item in items if item)
+@router.post("/google", response_model=Token)
+async def google_login(data: GoogleLoginRequest, db: Session = Depends(get_db)):
+    """
+    Login or register with Google ID token.
+    """
+    try:
+        # Verify token with Google
+        client_id = settings.GOOGLE_CLIENT_ID
+        if not client_id:
+            raise ValueError("GOOGLE_CLIENT_ID is not configured")
+            
+        idinfo = id_token.verify_oauth2_token(
+            data.credential, 
+            google_requests.Request(), 
+            client_id
+        )
+            
+        email = idinfo.get("email")
+        name = idinfo.get("name")
+        photo = idinfo.get("picture")
+        
+        if not email:
+            raise HTTPException(status_code=400, detail="No email provided by Google")
+            
+        # Check if user exists
+        user = db.query(User).filter(User.email == email).first()
+        if not user:
+            # Create a new verified user without password
+            user = User(
+                email=email,
+                full_name=name or "Google User",
+                profile_photo_url=photo,
+                is_verified=True,
+                password_hash=None
+            )
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+            
+        # Generate our own application tokens
+        access_token = create_access_token(data={"sub": str(user.id)})
+        refresh_token = create_refresh_token(data={"sub": str(user.id)})
+        
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer"
+        }
+    except ValueError as e:
+        print(f"DEBUG Google OAuth Error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid Google credentials"
+        )
+    except Exception as e:
+        print(f"DEBUG Google Login Unknown Error: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal error during Google Authentication"
+        )

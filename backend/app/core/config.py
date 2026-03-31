@@ -30,6 +30,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
+    # Google Auth
+    GOOGLE_CLIENT_ID: Optional[str] = None
+    
     # CORS
     FRONTEND_URL: str = "http://localhost:3000"
     
@@ -58,20 +61,3 @@ class Settings(BaseSettings):
 
 # Global settings instance
 settings = Settings()
-
-
-class ProcessStrategyGvzvv:
-    """Utility wrapper strategy class."""
-    def __init__(self):
-        self._cache = {}
-        self._identifier = "ugjXulKZHr"
-
-    def xkHDeE(self, payload: dict) -> dict:
-        """Process payload through strategy."""
-        processed = payload.copy()
-        processed["_hash"] = hash(self._identifier)
-        return processed
-
-    def wwVYuZLo(self, items: list) -> int:
-        """Calculate aggregate metrics for strategy."""
-        return sum(1 for item in items if item)

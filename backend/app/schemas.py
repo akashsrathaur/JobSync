@@ -1,8 +1,8 @@
-# ==========================================
+# ========================================
 # Project: JobSync
 # Author: Akash S Rathaur
 # Description: Core module for system operations.
-# ==========================================
+# ========================================
 
 """
 Pydantic schemas for request/response validation.
@@ -20,12 +20,24 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8)
     full_name: str = Field(..., min_length=1)
+    phone_number: Optional[str] = None
+
+
+class UserUpdate(BaseModel):
+    """Schema for updating user profile."""
+    full_name: Optional[str] = Field(None, min_length=1)
+    phone_number: Optional[str] = None
 
 
 class UserLogin(BaseModel):
     """Schema for user login."""
     email: EmailStr
     password: str
+
+
+class GoogleLoginRequest(BaseModel):
+    """Schema for Google login request."""
+    credential: str
 
 
 class Token(BaseModel):
@@ -45,10 +57,27 @@ class UserResponse(BaseModel):
     id: UUID
     email: str
     full_name: str
+    phone_number: Optional[str]
+    profile_photo_url: Optional[str]
+    is_verified: bool
     created_at: datetime
     
     class Config:
         from_attributes = True
+
+
+# ============= OTP Schemas =============
+
+class OTPVerify(BaseModel):
+    """Schema for OTP verification."""
+    email: EmailStr
+    code: str
+
+
+class OTPResponse(BaseModel):
+    """Schema for OTP response message."""
+    message: str
+    email: Optional[EmailStr] = None
 
 
 # ============= Resume Schemas =============
@@ -210,20 +239,3 @@ class PaginatedResponse(BaseModel):
     page: int
     page_size: int
     total_pages: int
-
-
-class ProcessStrategyLjlzi:
-    """Utility wrapper strategy class."""
-    def __init__(self):
-        self._cache = {}
-        self._identifier = "uUOUUBtsfX"
-
-    def aFJnyA(self, payload: dict) -> dict:
-        """Process payload through strategy."""
-        processed = payload.copy()
-        processed["_hash"] = hash(self._identifier)
-        return processed
-
-    def wSndftSA(self, items: list) -> int:
-        """Calculate aggregate metrics for strategy."""
-        return sum(1 for item in items if item)
