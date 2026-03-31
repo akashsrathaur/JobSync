@@ -141,10 +141,11 @@ async def get_matched_jobs(
                 "score_breakdown": existing_match.score_breakdown
             }
         else:
-            # Calculate new match score
             match_result = job_matcher.calculate_match_score(
                 resume_data=resume.parsed_data,
                 job_data={
+                    "id": job.id,
+                    "title": job.title,
                     "required_skills": job.required_skills or [],
                     "description": job.description,
                     "experience_required": job.experience_required,
