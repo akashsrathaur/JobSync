@@ -14,11 +14,14 @@ def upload_file_to_s3(file_content: bytes, filename: str) -> Optional[str]:
         
     try:
         # Initialize the S3 client using boto3
+        # We check for an explicit endpoint URL which is required for Supabase
+        custom_endpoint = os.getenv("AWS_ENDPOINT_URL")
         s3_client = boto3.client(
             "s3",
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
             region_name=settings.AWS_REGION,
+            endpoint_url=custom_endpoint if custom_endpoint else None,
         )
         
         # Generate a distinct key for the object
