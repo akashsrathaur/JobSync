@@ -142,8 +142,12 @@ class JobMatcher:
             noise = ((job_hash % 40) - 20) / 10 # -2.0 to +2.0
             final_score = min(max(final_score + noise, 0.0), 100.0)
         
+        # Final score scaling (Visual Boost: 60 - 95%)
+        # Logic: 60% base + up to 35% from the actual match
+        visual_score = 60 + (final_score * 0.35)
+        
         return {
-            "match_score": round(final_score, 2),
+            "match_score": round(visual_score, 2),
             "score_breakdown": {
                 "skill_match": max(round(skill_score * 100, 2), 0),
                 "semantic_similarity": max(round(semantic_score * 100, 2), 0),

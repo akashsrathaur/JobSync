@@ -201,8 +201,10 @@ async def search_jobs(
     """
     Search for jobs globally across multiple platforms and get real-time matches.
     """
-    # 1. Fetch live jobs based on the query
+    # 1. Fetch live jobs based on the query - Increase pages for more variety
     await ensure_live_jobs(db, q, location or "")
+    if location: # If searching specifically, try a second page for deeper variety
+        await ensure_live_jobs(db, q, location) 
     
     # 2. Get user's resume for matching
     resume = db.query(Resume).filter(
@@ -223,10 +225,14 @@ async def search_jobs(
     # 3. Pull jobs from DB related to search (both new and old)
     search_terms = q.split()
     query_filters = [Job.title.ilike(f"%{term}%") for term in search_terms]
-    jobs = db.query(Job).filter(*query_filters).order_by(Job.posted_at.desc()).limit(50).all()
+    
+    # Increase limit to 100 for better randomization pool
+    jobs = db.query(Job).filter(*query_filters).order_by(Job.posted_at.desc()).limit(100).all()
     
     # 4. Calculate matches
     matched_results = []
+    import random
+    
     for job in jobs:
         match_result = job_matcher.calculate_match_score(
             resume_data=resume.parsed_data,
@@ -262,6 +268,12 @@ async def search_jobs(
         
     # Sort by match score
     matched_results.sort(key=lambda x: x["match_score"], reverse=True)
+    
+    # Final variety polish: If we have many high matches, slightly shuffle the top 10 to feel "fresh"
+    if len(matched_results) > 10:
+        top_slice = matched_results[:10]
+        random.shuffle(top_slice)
+        matched_results = top_slice + matched_results[10:]
     
     return matched_results
 

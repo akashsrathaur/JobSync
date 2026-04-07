@@ -60,6 +60,22 @@ async def upload_resume(
     # Validate file
     validate_file(file)
     
+    # NEW: Delete existing resumes for the user to ensure only one active resume exists
+    existing_resumes = db.query(Resume).filter(Resume.user_id == current_user.id).all()
+    for old_resume in existing_resumes:
+        # Delete file from storage if local
+        if old_resume.file_url and not old_resume.file_url.startswith("http"):
+            local_path = old_resume.file_url.lstrip("/")
+            if os.path.exists(local_path):
+                try:
+                    os.remove(local_path)
+                except Exception as e:
+                    print(f"Error deleting old resume file: {e}")
+        
+        db.delete(old_resume)
+    
+    db.commit() # Commit deletions before proceeding
+    
     # Read file content
     file_content = await file.read()
     
