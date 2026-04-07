@@ -1,9 +1,3 @@
-# ==========================================
-# Project: JobSync
-# Author: Akash S Rathaur
-# Description: Core module for system operations.
-# ==========================================
-
 """
 Resume model for storing uploaded resumes and parsed data.
 """

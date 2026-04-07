@@ -1,9 +1,3 @@
-# ==========================================
-# Project: JobSync
-# Author: Akash S Rathaur
-# Description: Profile management routes.
-# ==========================================
-
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
 import os

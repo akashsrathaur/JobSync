@@ -1,9 +1,3 @@
-/**
- * Project: JobSync
- * Author: Akash S Rathaur
- * Module: Frontend UI Components
- */
-
 import Link from 'next/link';
 
 interface LogoProps {

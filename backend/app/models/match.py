@@ -1,9 +1,3 @@
-# ==========================================
-# Project: JobSync
-# Author: Akash S Rathaur
-# Description: Core module for system operations.
-# ==========================================
-
 """
 Match model for storing AI-generated job match scores.
 """

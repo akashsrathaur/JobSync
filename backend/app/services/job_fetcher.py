@@ -1,9 +1,3 @@
-# ==========================================
-# Project: JobSync
-# Author: Akash S Rathaur
-# Description: Core module for system operations.
-# ==========================================
-
 import httpx
 from datetime import datetime, timedelta
 from typing import List, Dict, Any

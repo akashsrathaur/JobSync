@@ -1,9 +1,3 @@
-# ==========================================
-# Project: JobSync
-# Author: Akash S Rathaur
-# Description: Core module for system operations.
-# ==========================================
-
 """
 Job routes for browsing jobs, getting matches, and managing saved jobs.
 """

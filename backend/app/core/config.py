@@ -1,9 +1,3 @@
-# ==========================================
-# Project: JobSync
-# Author: Akash S Rathaur
-# Description: Core module for system operations.
-# ==========================================
-
 """
 Application configuration using Pydantic Settings.
 Loads environment variables and provides type-safe configuration.

@@ -1,9 +1,3 @@
-/**
- * Project: JobSync
- * Author: Akash S Rathaur
- * Module: Frontend UI Components
- */
-
 'use client';
 
 import Link from 'next/link';

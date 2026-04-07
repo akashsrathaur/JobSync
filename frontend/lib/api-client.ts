@@ -1,10 +1,4 @@
 /**
- * Project: JobSync
- * Author: Akash S Rathaur
- * Module: Frontend UI Components
- */
-
-/**
  * API client with axios
  */
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
