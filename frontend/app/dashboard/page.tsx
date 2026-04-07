@@ -9,7 +9,15 @@ import FilterSidebar from '../components/FilterSidebar';
 import JobCard from '../components/JobCard';
 import JobDetailModal from '../components/JobDetailModal';
 import Logo from '../components/Logo';
+import GlobalSearch from '../components/GlobalSearch';
 import { Menu, X } from 'lucide-react';
+
+interface User {
+    full_name: string;
+    email: string;
+    phone_number: string | null;
+    profile_photo_url: string | null;
+}
 
 interface Job {
     id: string;
@@ -72,6 +80,7 @@ export default function DashboardPage() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [isGlobalSearching, setIsGlobalSearching] = useState(false);
 
     useEffect(() => {
         checkAuth();
@@ -94,8 +103,8 @@ export default function DashboardPage() {
 
     const loadUserData = async () => {
         try {
-            const data = await apiClient.get<Record<string, string | null>>(API_ENDPOINTS.me);
-            setUserData(data as React.SetStateAction<{ full_name: string; email: string; phone_number: string | null; profile_photo_url: string | null; } | null>);
+            const data = await apiClient.get<User>(API_ENDPOINTS.me);
+            setUserData(data);
         } catch (error) {
             console.error("Failed to load user data", error);
         }
@@ -103,6 +112,7 @@ export default function DashboardPage() {
 
     const loadJobs = async () => {
         try {
+            setLoading(true);
             const data = await apiClient.get<Job[]>(API_ENDPOINTS.matchedJobs);
             const enhancedData = data.map(job => ({
                 ...job,
@@ -121,13 +131,34 @@ export default function DashboardPage() {
             setFilteredJobs(enhancedData);
             setHasResume(true);
         } catch (error: unknown) {
-            // Check if error is a 400 Bad Request (Resume not found or similar)
-            // We need to safely access response.status structure if it exists
             const err = error as { response?: { status: number } };
             if (err.response?.status === 400) {
                 setHasResume(false);
             }
         } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGlobalSearch = async (query: string) => {
+        try {
+            setIsGlobalSearching(true);
+            setLoading(true);
+            const data = await apiClient.get<Job[]>(`${API_ENDPOINTS.matchedJobs.replace('/matched', '/search')}?q=${encodeURIComponent(query)}`);
+            const enhancedData = data.map(job => ({
+                ...job,
+                match: job.match_score ? job.match_score.toFixed(0) : 'N/A',
+                skills: job.skills || (job as unknown as Record<string, unknown>).required_skills as string[] || [],
+                job_type: job.job_type || 'Full-time',
+                url: (job as unknown as Record<string, unknown>).external_url as string || job.url || '#',
+                logo: `https://ui-avatars.com/api/?name=${encodeURIComponent(job.company)}&background=random&color=fff&size=128`,
+            }));
+            setJobs(enhancedData);
+            setFilteredJobs(enhancedData);
+        } catch (error) {
+            console.error("Global search failed", error);
+        } finally {
+            setIsGlobalSearching(false);
             setLoading(false);
         }
     };
@@ -401,6 +432,14 @@ export default function DashboardPage() {
                     </div>
                 ) : (
                     <>
+                        {/* Global Search */}
+                        <div className="mb-8">
+                            <GlobalSearch 
+                                onSearch={handleGlobalSearch} 
+                                loading={isGlobalSearching}
+                            />
+                        </div>
+
                         {/* Stats Cards */}
                         <div className="grid grid-cols-3 gap-2 sm:gap-6 mb-8">
                             <StatsCard

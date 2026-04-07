@@ -191,6 +191,81 @@ async def get_matched_jobs(
     return paginated_jobs
 
 
+@router.get("/search", response_model=List[JobWithMatch])
+async def search_jobs(
+    q: str = Query(..., min_length=1),
+    location: Optional[str] = Query(None),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Search for jobs globally across multiple platforms and get real-time matches.
+    """
+    # 1. Fetch live jobs based on the query
+    await ensure_live_jobs(db, q, location or "")
+    
+    # 2. Get user's resume for matching
+    resume = db.query(Resume).filter(
+        Resume.user_id == current_user.id
+    ).order_by(Resume.uploaded_at.desc()).first()
+    
+    if not resume:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Please upload a resume first to see matched jobs"
+        )
+    
+    # Get user preferences
+    preferences = db.query(Preference).filter(
+        Preference.user_id == current_user.id
+    ).first()
+    
+    # 3. Pull jobs from DB related to search (both new and old)
+    search_terms = q.split()
+    query_filters = [Job.title.ilike(f"%{term}%") for term in search_terms]
+    jobs = db.query(Job).filter(*query_filters).order_by(Job.posted_at.desc()).limit(50).all()
+    
+    # 4. Calculate matches
+    matched_results = []
+    for job in jobs:
+        match_result = job_matcher.calculate_match_score(
+            resume_data=resume.parsed_data,
+            job_data={
+                "id": job.id,
+                "title": job.title,
+                "required_skills": job.required_skills or [],
+                "description": job.description,
+                "experience_required": job.experience_required,
+                "location": job.location,
+                "salary_min": job.salary_min,
+                "salary_max": job.salary_max
+            },
+            preferences=preferences.__dict__ if preferences else None
+        )
+        
+        matched_results.append({
+            "id": job.id,
+            "title": job.title,
+            "company": job.company,
+            "description": job.description,
+            "location": job.location,
+            "salary_min": job.salary_min,
+            "salary_max": job.salary_max,
+            "experience_required": str(job.experience_required) if job.experience_required else None,
+            "required_skills": job.required_skills,
+            "source": job.source,
+            "external_url": job.external_url,
+            "posted_at": job.posted_at,
+            "match_score": match_result["match_score"],
+            "score_breakdown": match_result["score_breakdown"]
+        })
+        
+    # Sort by match score
+    matched_results.sort(key=lambda x: x["match_score"], reverse=True)
+    
+    return matched_results
+
+
 @router.get("/{job_id}", response_model=JobResponse)
 async def get_job(
     job_id: str,
