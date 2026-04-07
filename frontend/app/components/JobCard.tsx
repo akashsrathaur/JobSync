@@ -76,9 +76,9 @@ export default function JobCard({ job, onViewDetails, onSave, onApply, isSaved =
 
     return (
         <div className={`rounded-2xl p-6 transition-all duration-300 border shadow-sm hover:shadow-md border-l-4 ${getScoreBorderClass(job.match_score || 0)} ${cardAccent} group`}>
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start mb-4 gap-4 sm:gap-0">
                 {/* Company Logo Placeholder */}
-                <div className="flex gap-4 flex-1">
+                <div className="flex gap-4 flex-1 w-full">
                     <div className={`w-16 h-16 bg-gradient-to-br ${iconAccent} rounded-xl flex items-center justify-center flex-shrink-0`}>
                         <span className="text-2xl font-bold">
                             {job.company.charAt(0)}
@@ -118,7 +118,7 @@ export default function JobCard({ job, onViewDetails, onSave, onApply, isSaved =
 
                 {/* Match Score */}
                 {job.match_score !== undefined && (
-                    <div className="flex flex-col items-end gap-2">
+                    <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-between sm:justify-start border-t sm:border-0 border-slate-100/50 pt-3 sm:pt-0">
                         <div className={`px-5 py-3 rounded-xl font-bold text-2xl border-2 ${getScoreClass(job.match_score)}`}>
                             {job.match_score.toFixed(0)}%
                         </div>
@@ -144,7 +144,7 @@ export default function JobCard({ job, onViewDetails, onSave, onApply, isSaved =
             {/* Score Breakdown */}
             {job.score_breakdown && (
                 <div className="mb-4">
-                    <div className="grid grid-cols-5 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
                         {Object.entries(job.score_breakdown).map(([key, value]) => (
                             <div key={key} className="text-center">
                                 <div className="h-1.5 w-full bg-slate-100 rounded-full mb-2 overflow-hidden">
@@ -166,7 +166,7 @@ export default function JobCard({ job, onViewDetails, onSave, onApply, isSaved =
             )}
 
             {/* Action Buttons */}
-            <div className="flex gap-3 pt-4 border-t border-slate-100">
+            <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
                 <button
                     onClick={() => onViewDetails(job)}
                     className="flex-1 px-4 py-3 rounded-xl font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition-all duration-200"

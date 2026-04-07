@@ -87,6 +87,27 @@ export default function Home() {
               {isMenuOpen ? <X /> : <Menu />}
             </button>
           </nav>
+
+          {/* Mobile Menu Dropdown */}
+          {isMenuOpen && (
+            <div className="absolute top-16 left-0 right-0 bg-white/95 backdrop-blur-md shadow-xl border-b border-slate-100 p-4 md:hidden flex flex-col gap-4 z-50">
+              <a href="#jobs" className="text-base font-medium text-slate-700 hover:text-blue-500 py-3 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
+                Find Jobs
+              </a>
+              <a href="#companies" className="text-base font-medium text-slate-700 hover:text-blue-500 py-3 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
+                Top Companies
+              </a>
+              <a href="#features" className="text-base font-medium text-slate-700 hover:text-blue-500 py-3 border-b border-slate-50" onClick={() => setIsMenuOpen(false)}>
+                Why Us
+              </a>
+              <button
+                onClick={(e) => { setIsMenuOpen(false); handleCTAClick(e); }}
+                className="mt-2 px-6 py-3 rounded-xl bg-blue-600 text-white font-bold w-full"
+              >
+                Find jobs now
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -123,7 +144,7 @@ export default function Home() {
 
         <div className="container-custom relative z-20">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight text-slate-900 leading-[1.1]">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 tracking-tight text-slate-900 leading-[1.1]">
               Apply to <span className="text-blue-500 cursor-text">Relevant Jobs</span> in Seconds <br className="hidden md:block" />
               with JobSync AI
             </h1>
@@ -199,9 +220,9 @@ export default function Home() {
 
       <section id="features" className="py-24 bg-white">
         <div className="container-custom">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-4">
-              Your dream job in 4 quick steps... <span className="text-blue-500">Resume Matching AI</span>
+          <div className="text-center mb-16 px-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+              Your dream job in 4 quick steps... <span className="text-blue-500 block sm:inline mt-2 sm:mt-0">Resume Matching AI</span>
             </h2>
             <p className="text-xl text-slate-500 font-medium">
               We make finding awesome jobs <span className="text-blue-500 font-bold">Resumé Free</span>
@@ -209,7 +230,7 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="card-polished border border-slate-100 flex flex-col items-center text-center p-8 bg-slate-50/50">
+            <div className="card-polished border border-slate-100 flex flex-col items-center text-center p-6 md:p-8 bg-slate-50/50">
               <h3 className="text-xl font-bold text-slate-800 mb-6">1. Upload Your Resume (PDF)</h3>
               <div className="w-full max-w-sm bg-white border border-slate-100 rounded-xl p-4 shadow-sm">
                 <div className="flex gap-4">
@@ -226,7 +247,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="card-polished border border-slate-100 flex flex-col items-center text-center p-8 bg-slate-50/50">
+            <div className="card-polished border border-slate-100 flex flex-col items-center text-center p-6 md:p-8 bg-slate-50/50">
               <h3 className="text-xl font-bold text-slate-800 mb-6">2. Set Your Preferences</h3>
               <div className="w-full max-w-sm bg-white border border-slate-100 rounded-xl p-4 shadow-sm outline outline-2 outline-blue-100 outline-offset-4">
                 <div className="flex items-center justify-between mb-4">
@@ -243,7 +264,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="card-polished border border-slate-100 flex flex-col items-center text-center p-8 bg-slate-50/50">
+            <div className="card-polished border border-slate-100 flex flex-col items-center text-center p-6 md:p-8 bg-slate-50/50">
               <h3 className="text-xl font-bold text-slate-800 mb-6">3. Get AI-Matched Jobs</h3>
               <div className="w-full max-w-sm bg-white border border-slate-100 rounded-xl p-4 shadow-sm relative overflow-hidden">
                 <div className="flex justify-between items-center mb-4">
@@ -256,7 +277,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="card-polished border border-slate-100 flex flex-col items-center text-center p-8 bg-slate-50/50">
+            <div className="card-polished border border-slate-100 flex flex-col items-center text-center p-6 md:p-8 bg-slate-50/50">
               <h3 className="text-xl font-bold text-slate-800 mb-6">4. Track Your Applications</h3>
               <div className="w-full max-w-sm bg-white border border-slate-100 rounded-xl p-4 shadow-sm">
                 <div className="flex items-center gap-4 mb-4">

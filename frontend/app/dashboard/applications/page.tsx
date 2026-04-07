@@ -87,10 +87,10 @@ export default function ApplicationsPage() {
                     <h1 className="text-3xl font-bold text-slate-800 mb-8">My Applications</h1>
 
                     {applications.length === 0 ? (
-                        <div className="bg-white p-12 rounded-2xl border border-slate-200 shadow-sm text-center">
+                        <div className="bg-white p-6 sm:p-12 rounded-2xl border border-slate-200 shadow-sm text-center">
                             <div className="text-5xl mb-4">🚀</div>
                             <h2 className="text-2xl font-bold text-slate-800 mb-2">No applications yet</h2>
-                            <p className="text-slate-500 mb-6">You haven't applied to any jobs yet. Head back to the dashboard to find your perfect match!</p>
+                            <p className="text-slate-500 mb-6">You haven&apos;t applied to any jobs yet. Head back to the dashboard to find your perfect match!</p>
                             <button 
                                 onClick={() => router.push('/dashboard')}
                                 className="btn-primary"
@@ -101,7 +101,7 @@ export default function ApplicationsPage() {
                     ) : (
                         <div className="space-y-4">
                             {applications.map((app) => (
-                                <div key={app.id} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                                <div key={app.id} className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                                         <div className="flex items-start gap-4">
                                             <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center flex-shrink-0">

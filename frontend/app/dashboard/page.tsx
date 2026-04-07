@@ -16,6 +16,7 @@ import FilterSidebar from '../components/FilterSidebar';
 import JobCard from '../components/JobCard';
 import JobDetailModal from '../components/JobDetailModal';
 import Logo from '../components/Logo';
+import { Menu, X } from 'lucide-react';
 
 interface Job {
     id: string;
@@ -51,6 +52,7 @@ export default function DashboardPage() {
     const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set());
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('best_match');
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const [activeFilters, setActiveFilters] = useState({
         location: '',
@@ -220,7 +222,10 @@ export default function DashboardPage() {
             <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
                 <div className="container-custom py-4">
                     <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-8">
+                        <div className="flex items-center gap-4 md:gap-8">
+                            <button className="md:hidden text-slate-600 p-1" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                            </button>
                             <Logo />
                             <nav className="hidden md:flex items-center space-x-6">
                                 <a href="/dashboard" className="text-blue-600 font-semibold border-b-2 border-blue-600 pb-1">
@@ -279,6 +284,17 @@ export default function DashboardPage() {
                             </div>
                         </div>
                     </div>
+
+                    {/* Mobile Nav Dropdown */}
+                    {isMobileMenuOpen && (
+                        <nav className="md:hidden mt-4 pt-4 border-t border-slate-100 flex flex-col space-y-4 pb-2">
+                            <a href="/dashboard" className="text-blue-600 font-semibold px-2 block">Jobs</a>
+                            <a href="/dashboard/resume" className="text-slate-600 hover:text-blue-600 font-medium px-2 block">Resume</a>
+                            <a href="/dashboard/preferences" className="text-slate-600 hover:text-blue-600 font-medium px-2 block">Preferences</a>
+                            <a href="/dashboard/applications" className="text-slate-600 hover:text-blue-600 font-medium px-2 block">Applications</a>
+                            <a href="/dashboard/settings" className="text-slate-600 hover:text-blue-600 font-medium px-2 block">Settings</a>
+                        </nav>
+                    )}
                 </div>
             </header>
 

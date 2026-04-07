@@ -165,7 +165,7 @@ export default function SettingsPage() {
 
                         {/* Profile Info Form */}
                         <div className="md:col-span-2">
-                            <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+                            <div className="bg-white p-4 sm:p-8 rounded-2xl border border-slate-200 shadow-sm">
                                 {message.text && (
                                     <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 text-sm ${
                                         message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'

@@ -136,7 +136,7 @@ export default function ResumePage() {
                             </div>
                         ) : (
                             <>
-                                <div className="border-2 border-dashed border-slate-300 rounded-lg p-12 text-center hover:border-blue-400 transition-colors">
+                                <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 md:p-12 text-center hover:border-blue-400 transition-colors">
                                     <input
                                         type="file"
                                         accept=".pdf"

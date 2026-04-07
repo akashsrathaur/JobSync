@@ -121,7 +121,7 @@ export default function PreferencesPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
+                    <div className="bg-white p-4 sm:p-8 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden">
                         {/* Decorative background element */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 
