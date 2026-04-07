@@ -24,6 +24,12 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str
     
+    @property
+    def get_database_url(self) -> str:
+        if self.DATABASE_URL and self.DATABASE_URL.startswith("postgres://"):
+            return self.DATABASE_URL.replace("postgres://", "postgresql://", 1)
+        return self.DATABASE_URL
+    
     # JWT Authentication
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
