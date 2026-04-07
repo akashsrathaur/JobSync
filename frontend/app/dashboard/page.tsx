@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '../../lib/api-client';
 import { API_ENDPOINTS, API_URL } from '../../lib/config';
-import SearchBar from '../components/SearchBar';
 import StatsCard from '../components/StatsCard';
 import FilterSidebar from '../components/FilterSidebar';
 import JobCard from '../components/JobCard';
@@ -427,11 +426,6 @@ export default function DashboardPage() {
                             />
                         </div>
 
-                        {/* Search Bar */}
-                        <SearchBar
-                            onSearch={setSearchQuery}
-                            onSortChange={setSortBy}
-                        />
 
                         {/* Main Content */}
                         <div className="space-y-6">
@@ -476,25 +470,42 @@ export default function DashboardPage() {
                                     </div>
                                 ) : (
                                     <div className="space-y-6">
-                                        <div className="flex justify-between items-center mb-4 md:pt-5">
+                                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 md:pt-5">
                                             <h2 className="text-xl md:text-2xl font-bold text-slate-800">
                                                 {filteredJobs.length} Jobs Found
                                             </h2>
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-3 w-full sm:w-auto">
+                                                {/* Filter Toggle (Mobile Only) */}
                                                 <button 
                                                     onClick={() => setAreFiltersVisible(!areFiltersVisible)}
-                                                    className={`lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold text-xs transition-all ${
-                                                        areFiltersVisible ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200'
+                                                    className={`lg:hidden flex items-center gap-2 px-4 py-2 rounded-xl border font-bold text-xs transition-all shadow-sm ${
+                                                        areFiltersVisible ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                                                     }`}
                                                 >
-                                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                                                     </svg>
-                                                    {areFiltersVisible ? 'Close' : 'Filter'}
+                                                    {areFiltersVisible ? 'Hide Filters' : 'Filters'}
                                                 </button>
-                                                <span className="hidden sm:inline-block text-sm border border-slate-200 px-3 py-1 rounded-lg text-slate-600 font-medium bg-white">
-                                                    Sorted by <span className="text-blue-600 font-semibold">{sortBy.replace('_', ' ')}</span>
-                                                </span>
+
+                                                {/* Sort Dropdown */}
+                                                <div className="relative flex-1 sm:flex-initial">
+                                                    <select
+                                                        value={sortBy}
+                                                        onChange={(e) => setSortBy(e.target.value)}
+                                                        className="w-full sm:w-48 h-10 pl-3 pr-8 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer transition-all appearance-none text-xs sm:text-sm text-slate-700 font-bold shadow-sm hover:bg-slate-50"
+                                                    >
+                                                        <option value="best_match">Sort: Best Match</option>
+                                                        <option value="newest">Sort: Newest First</option>
+                                                        <option value="salary_high">Sort: Highest Salary</option>
+                                                        <option value="salary_low">Sort: Lowest Salary</option>
+                                                    </select>
+                                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                                        <svg className="h-4 w-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         {filteredJobs.map((job) => (
