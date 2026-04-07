@@ -402,7 +402,7 @@ export default function DashboardPage() {
                 ) : (
                     <>
                         {/* Stats Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div className="grid grid-cols-3 gap-2 sm:gap-6 mb-8">
                             <StatsCard
                                 title="Total Matches"
                                 value={filteredJobs.length}

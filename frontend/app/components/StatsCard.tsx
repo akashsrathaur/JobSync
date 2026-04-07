@@ -26,22 +26,24 @@ export default function StatsCard({ title, value, icon, color, trend, className 
     const textColorClass = colors[color].split(' ')[0];
 
     return (
-        <div className={`bg-white rounded-xl p-6 shadow-sm border border-slate-100 ${className}`}>
-            <div className="flex justify-between items-start mb-4">
-                <div className={`p-3 rounded-lg ${colors[color]}`}>
-                    {icon}
+        <div className={`bg-white rounded-xl p-3 sm:p-6 shadow-sm border border-slate-100 flex flex-col items-center sm:items-start text-center sm:text-left h-full ${className}`}>
+            <div className="flex justify-center sm:justify-between items-start mb-2 sm:mb-4 w-full">
+                <div className={`p-1.5 sm:p-3 rounded-lg ${colors[color]}`}>
+                    <div className="sm:scale-100 scale-75">
+                        {icon}
+                    </div>
                 </div>
                 {trend && (
-                    <div className={`flex items-center text-sm font-medium ${trend.isPositive ? 'text-emerald-600' : 'text-red-600'}`}>
+                    <div className={`hidden sm:flex items-center text-sm font-medium ${trend.isPositive ? 'text-emerald-600' : 'text-red-600'}`}>
                         <span>{trend.isPositive ? '↑' : '↓'}</span>
                         <span>{Math.abs(trend.value)}%</span>
                     </div>
                 )}
             </div>
 
-            <div>
-                <p className="text-slate-500 text-sm font-medium mb-1">{title}</p>
-                <h3 className={`text-2xl font-bold ${textColorClass}`}>{value}</h3>
+            <div className="min-w-0 w-full overflow-hidden">
+                <p className="text-slate-500 text-[10px] sm:text-sm font-bold sm:font-medium mb-0.5 sm:mb-1 uppercase sm:normal-case truncate truncate tracking-tight">{title}</p>
+                <h3 className={`text-sm sm:text-2xl font-black sm:font-bold ${textColorClass} truncate`}>{value}</h3>
             </div>
         </div>
     );
