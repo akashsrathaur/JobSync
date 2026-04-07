@@ -35,6 +35,13 @@ interface Job {
     url?: string;
 }
 
+interface Notification {
+    id: string;
+    title: string;
+    message: string;
+    time: string;
+}
+
 export default function DashboardPage() {
     const router = useRouter();
     const [jobs, setJobs] = useState<Job[]>([]);
@@ -43,7 +50,6 @@ export default function DashboardPage() {
     const [hasResume, setHasResume] = useState(false);
     const [selectedJob, setSelectedJob] = useState<Job | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set());
     const [searchQuery, setSearchQuery] = useState('');
     const [sortBy, setSortBy] = useState('best_match');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -56,12 +62,17 @@ export default function DashboardPage() {
         datePosted: 'any'
     });
     const [appliedJobs, setAppliedJobs] = useState<Set<string>>(new Set());
+        const [areFiltersVisible, setAreFiltersVisible] = useState(false);
     const [userData, setUserData] = useState<{
         full_name: string;
         email: string;
         phone_number: string | null;
         profile_photo_url: string | null;
     } | null>(null);
+
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
 
     useEffect(() => {
         checkAuth();
@@ -177,27 +188,28 @@ export default function DashboardPage() {
         setIsModalOpen(true);
     };
 
-    const handleSaveJob = (jobId: string) => {
-        setSavedJobs(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(jobId)) {
-                newSet.delete(jobId);
-            } else {
-                newSet.add(jobId);
-            }
-            return newSet;
-        });
-    };
 
     const handleApply = (jobId: string) => {
+        const job = jobs.find(j => j.id === jobId);
+        
         // Optimistically set applied state
         setAppliedJobs(prev => {
             const newSet = new Set(prev);
             newSet.add(jobId);
             return newSet;
         });
+
+        // Add Notification
+        if (job) {
+            const newNotification: Notification = {
+                id: Math.random().toString(36).substr(2, 9),
+                title: 'Application Sent',
+                message: `Applied for ${job.title} at ${job.company}`,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            };
+            setNotifications(prev => [newNotification, ...prev]);
+        }
         
-        const job = jobs.find(j => j.id === jobId);
         if (job && job.url && job.url.startsWith('http')) {
             window.open(job.url, '_blank', 'noopener,noreferrer');
         } else if (job) {
@@ -214,7 +226,7 @@ export default function DashboardPage() {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50">
             {/* Enhanced Header */}
             <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
-                <div className="container-custom py-4">
+                <div className="container-custom py-2 sm:py-4">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-4 md:gap-8">
                             <button className="md:hidden text-slate-600 p-1" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -228,9 +240,6 @@ export default function DashboardPage() {
                                 <a href="/dashboard/resume" className="text-slate-600 hover:text-blue-600 font-medium transition-colors">
                                     Resume
                                 </a>
-                                <a href="/dashboard/preferences" className="text-slate-600 hover:text-blue-600 font-medium transition-colors">
-                                    Preferences
-                                </a>
                                 <a href="/dashboard/applications" className="text-slate-600 hover:text-blue-600 font-medium transition-colors">
                                     Applications
                                 </a>
@@ -240,41 +249,127 @@ export default function DashboardPage() {
                             </nav>
                         </div>
                         <div className="flex items-center gap-4">
-                            <button className="relative p-2 text-slate-600 hover:text-blue-600 transition-colors">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                </svg>
-                                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                            </button>
-                            <div className="flex items-center gap-3">
-                                <a href="/dashboard/settings" className="w-10 h-10 bg-gradient-to-br from-blue-500 to-sky-500 rounded-full flex items-center justify-center text-white font-bold shadow-md overflow-hidden relative group">
-                                    {userData?.profile_photo_url ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img 
-                                            src={`${API_URL}${userData.profile_photo_url}`} 
-                                            alt="Profile" 
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        userData?.full_name?.charAt(0) || 'U'
+                            {/* Notification Bell */}
+                            <div className="relative">
+                                <button 
+                                    onClick={() => {
+                                        setIsNotificationOpen(!isNotificationOpen);
+                                        setIsProfileOpen(false);
+                                    }}
+                                    className={`relative p-2 rounded-full transition-colors ${isNotificationOpen ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:text-blue-600 hover:bg-slate-50'}`}
+                                >
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                    </svg>
+                                    {notifications.length > 0 && (
+                                        <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
                                     )}
-                                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
+                                </button>
+
+                                {/* Notification Dropdown */}
+                                {isNotificationOpen && (
+                                    <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                                        <div className="p-4 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+                                            <h3 className="font-bold text-slate-800">Notifications</h3>
+                                            {notifications.length > 0 && (
+                                                <button 
+                                                    onClick={() => setNotifications([])}
+                                                    className="text-xs text-blue-600 hover:text-blue-700 font-semibold"
+                                                >
+                                                    Clear all
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="max-h-[400px] overflow-y-auto">
+                                            {notifications.length === 0 ? (
+                                                <div className="p-8 text-center">
+                                                    <div className="text-4xl mb-3">🔔</div>
+                                                    <p className="text-slate-500 text-sm">No new notifications</p>
+                                                </div>
+                                            ) : (
+                                                <div className="divide-y divide-slate-50">
+                                                    {notifications.map((notif) => (
+                                                        <div key={notif.id} className="p-4 hover:bg-slate-50 transition-colors cursor-default">
+                                                            <div className="flex justify-between items-start mb-1">
+                                                                <p className="font-bold text-sm text-slate-800">{notif.title}</p>
+                                                                <span className="text-[10px] text-slate-400 font-medium">{notif.time}</span>
+                                                            </div>
+                                                            <p className="text-xs text-slate-600 leading-relaxed">{notif.message}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                </a>
-                                <div className="hidden sm:block text-left">
-                                    <p className="text-sm font-semibold text-slate-800 leading-none">{userData?.full_name}</p>
-                                    <p className="text-xs text-slate-500 mt-1">Free Member</p>
-                                </div>
-                                <button onClick={handleLogout} className="text-slate-600 hover:text-red-600 font-medium transition-colors flex items-center gap-2">
-                                    <span>Logout</span>
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                )}
+                            </div>
+
+                            {/* Profile Dropdown */}
+                            <div className="relative">
+                                <button 
+                                    onClick={() => {
+                                        setIsProfileOpen(!isProfileOpen);
+                                        setIsNotificationOpen(false);
+                                    }}
+                                    className="flex items-center gap-3 p-1 rounded-full hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100"
+                                >
+                                    <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-sky-500 rounded-full flex items-center justify-center text-white font-bold shadow-sm overflow-hidden relative">
+                                        {userData?.profile_photo_url ? (
+                                            <img 
+                                                src={`${API_URL}${userData.profile_photo_url}`} 
+                                                alt="Profile" 
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            userData?.full_name?.charAt(0) || 'U'
+                                        )}
+                                    </div>
+                                    <div className="hidden sm:block text-left pr-2">
+                                        <p className="text-sm font-bold text-slate-800 leading-none">{userData?.full_name?.split(' ')[0]}</p>
+                                        <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-wider font-bold">Member</p>
+                                    </div>
+                                    <svg className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
                                 </button>
+
+                                {/* Profile Menu Dropdown */}
+                                {isProfileOpen && (
+                                    <>
+                                        <div className="fixed inset-0 z-40" onClick={() => setIsProfileOpen(false)}></div>
+                                        <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                                            <div className="p-4 border-b border-slate-50 bg-slate-50/30">
+                                                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">Signed in as</p>
+                                                <p className="text-sm font-bold text-slate-800 truncate">{userData?.email}</p>
+                                            </div>
+                                            <div className="p-2">
+                                                <a href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all font-medium">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                    </svg>
+                                                    My Profile
+                                                </a>
+                                                <a href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2.5 text-sm text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all font-medium">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    Account Settings
+                                                </a>
+                                                <div className="my-1 border-t border-slate-50"></div>
+                                                <button 
+                                                    onClick={handleLogout}
+                                                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                                    </svg>
+                                                    Sign Out
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -284,7 +379,6 @@ export default function DashboardPage() {
                         <nav className="md:hidden mt-4 pt-4 border-t border-slate-100 flex flex-col space-y-4 pb-2">
                             <a href="/dashboard" className="text-blue-600 font-semibold px-2 block">Jobs</a>
                             <a href="/dashboard/resume" className="text-slate-600 hover:text-blue-600 font-medium px-2 block">Resume</a>
-                            <a href="/dashboard/preferences" className="text-slate-600 hover:text-blue-600 font-medium px-2 block">Preferences</a>
                             <a href="/dashboard/applications" className="text-slate-600 hover:text-blue-600 font-medium px-2 block">Applications</a>
                             <a href="/dashboard/settings" className="text-slate-600 hover:text-blue-600 font-medium px-2 block">Settings</a>
                         </nav>
@@ -309,7 +403,7 @@ export default function DashboardPage() {
                 ) : (
                     <>
                         {/* Stats Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                             <StatsCard
                                 title="Total Matches"
                                 value={filteredJobs.length}
@@ -323,12 +417,6 @@ export default function DashboardPage() {
                                 icon="📝"
                                 color="blue"
                                 trend={{ value: 5, isPositive: true }}
-                            />
-                            <StatsCard
-                                title="Saved Jobs"
-                                value={savedJobs.size}
-                                icon="💾"
-                                color="amber"
                             />
                             <StatsCard
                                 title="Profile Score"
@@ -346,14 +434,20 @@ export default function DashboardPage() {
                         />
 
                         {/* Main Content */}
-                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                            {/* Filter Sidebar */}
-                            <div className="lg:col-span-1">
+                        <div className="space-y-6">
+                            {/* Filter Sidebar (Mobile Toggle) */}
+                            <div className={areFiltersVisible ? "block lg:hidden" : "hidden"}>
                                 <FilterSidebar onFilterChange={handleFilterChange} />
                             </div>
 
-                            {/* Jobs List */}
-                            <div className="lg:col-span-3">
+                            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                                {/* Desktop Filter Sidebar */}
+                                <div className="hidden lg:col-span-1 lg:block">
+                                    <FilterSidebar onFilterChange={handleFilterChange} />
+                                </div>
+
+                                {/* Jobs List */}
+                                <div className="lg:col-span-3">
                                 {loading ? (
                                     <div className="text-center py-20 px-4 glass-card mt-8">
                                         <div className="inline-block relative w-20 h-20 mb-6">
@@ -383,26 +477,38 @@ export default function DashboardPage() {
                                 ) : (
                                     <div className="space-y-6">
                                         <div className="flex justify-between items-center mb-4 md:pt-5">
-                                            <h2 className="text-2xl font-bold text-slate-800">
+                                            <h2 className="text-xl md:text-2xl font-bold text-slate-800">
                                                 {filteredJobs.length} Jobs Found
                                             </h2>
-                                            <span className="text-sm border border-slate-200 px-3 py-1 rounded-lg text-slate-600 font-medium bg-white">
-                                                Sorted by <span className="text-blue-600 font-semibold">{sortBy.replace('_', ' ')}</span>
-                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                <button 
+                                                    onClick={() => setAreFiltersVisible(!areFiltersVisible)}
+                                                    className={`lg:hidden flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-bold text-xs transition-all ${
+                                                        areFiltersVisible ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200'
+                                                    }`}
+                                                >
+                                                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                                    </svg>
+                                                    {areFiltersVisible ? 'Close' : 'Filter'}
+                                                </button>
+                                                <span className="hidden sm:inline-block text-sm border border-slate-200 px-3 py-1 rounded-lg text-slate-600 font-medium bg-white">
+                                                    Sorted by <span className="text-blue-600 font-semibold">{sortBy.replace('_', ' ')}</span>
+                                                </span>
+                                            </div>
                                         </div>
                                         {filteredJobs.map((job) => (
                                             <JobCard
                                                 key={job.id}
                                                 job={job}
                                                 onViewDetails={handleViewDetails}
-                                                onSave={handleSaveJob}
                                                 onApply={handleApply}
-                                                isSaved={savedJobs.has(job.id)}
                                                 isApplied={appliedJobs.has(job.id)}
                                             />
                                         ))}
                                     </div>
                                 )}
+                                </div>
                             </div>
                         </div>
                     </>
