@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PlanTier {
+  FREE
+  SPRINT
+  STARTER
+  PRO
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  PENDING
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id                String         @id @default(uuid())
+  email             String         @unique
+  name              String?
+  hashedPassword    String?
+  tier              PlanTier       @default(FREE)
+  creditsRemaining  Int            @default(2)
+  monthlyQuota      Int            @default(2)
+  usedRunsThisMonth Int            @default(0)
+  quotaResetAt      DateTime       @default(now())
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  subscriptions     Subscription[]
+  resumes           Resume[]
+  tailorJobs        TailorJob[]
+  usageLedger       UsageLedger[]
+
+  @@index([email])
+}
+
+model Subscription {
+  id                     String             @id @default(uuid())
+  userId                 String
+  user                   User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId                 String             // free, sprint_7d, starter_monthly, pro_monthly
+  tier                   PlanTier
+  razorpayOrderId        String?            @unique
+  razorpayPaymentId      String?            @unique
+  razorpaySubscriptionId String?            @unique
+  status                 SubscriptionStatus @default(PENDING)
+  amountInr              Float
+  gstInr                 Float
+  gatewayFeeInr          Float
+  currentPeriodStart     DateTime           @default(now())
+  currentPeriodEnd       DateTime
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model PaymentEvent {
+  id                String   @id @default(uuid())
+  eventId           String   @unique // Razorpay event_id for idempotency
+  eventType         String
+  razorpayPaymentId String?
+  razorpayOrderId   String?
+  payloadJson       String
+  status            String   // PROCESSED, FAILED, DUPLICATE
+  processedAt       DateTime @default(now())
+  createdAt         DateTime @default(now())
+
+  @@index([eventId])
+  @@index([razorpayOrderId])
+}
+
+model Resume {
+  id               String       @id @default(uuid())
+  userId           String
+  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fileName         String
+  fileType         String       // application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  fileSizeBytes    Int
+  extractedRawText String       @db.Text
+  isDeleted        Boolean      @default(false)
+  deletedAt        DateTime?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  tailorJobs       TailorJob[]
+
+  @@index([userId])
+  @@index([isDeleted])
+}
+
+model TailorJob {
+  id                 String       @id @default(uuid())
+  userId             String
+  user               User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resumeId           String?
+  resume             Resume?      @relation(fields: [resumeId], references: [id], onDelete: SetNull)
+  idempotencyKey     String       @unique
+  targetRole         String?
+  targetCompany      String?
+  jobDescriptionText String       @db.Text
+  weaknessAuditJson  String       @db.Text
+  tailoredResumeJson String       @db.Text
+  atsScoreBefore     Float
+  atsScoreAfter      Float
+  modelUsed          String       @default("gemini-3.1-flash-lite")
+  inputTokens        Int          @default(0)
+  outputTokens       Int          @default(0)
+  costInr            Float        @default(0.0)
+  status             JobStatus    @default(COMPLETED)
+  isDeleted          Boolean      @default(false)
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  usageLedgers       UsageLedger[]
+
+  @@index([userId])
+  @@index([idempotencyKey])
+}
+
+model UsageLedger {
+  id           String     @id @default(uuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId        String?
+  job          TailorJob? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  action       String     // TAILOR_RUN, EXPORT_PDF, EXPORT_DOCX, DEEP_POLISH, PLAN_PURCHASE
+  creditsDelta Int        // -1, +10, etc.
+  tokensUsed   Int        @default(0)
+  costUsd      Float      @default(0.0)
+  costInr      Float      @default(0.0)
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime   @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
