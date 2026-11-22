@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
       .replace(/[^a-zA-Z0-9_-]/g, '_');
     const fileName = `${safeName}_ATS_Tailored.docx`;
 
-    return new NextResponse(docxBuffer, {
+    return new NextResponse(new Uint8Array(docxBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

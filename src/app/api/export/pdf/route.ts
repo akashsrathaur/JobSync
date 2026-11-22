@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       .replace(/[^a-zA-Z0-9_-]/g, '_');
     const fileName = `${safeName}_ATS_Tailored.pdf`;
 
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
