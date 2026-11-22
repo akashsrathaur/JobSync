@@ -1,67 +1,34 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
-ENV/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
 
-# Environment variables
+# Next.js build
+/.next/
+/out/
+
+# Environment files
 .env
 .env.local
-.env.*.local
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# Uploads and data
-uploads/
-*.pdf
-*.doc
-*.docx
-
-# Database
-*.db
-*.sqlite
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
-*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Node
-node_modules/
-.next/
-out/
+# Database & SQLite fallbacks
+*.db
+*.sqlite
+/prisma/*.db-journal
+
+# OS files
+.DS_Store
+*.pem
+
+# Typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# Testing
-.coverage
-htmlcov/
-.pytest_cache/
-.cache/
-
-# OS
-Thumbs.db
-!frontend/lib/
