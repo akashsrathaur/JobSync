@@ -1,0 +1,30 @@
+Akash Sharma
+Bengaluru, Karnataka, India | +91-9876543210 | akash.sharma@example.com | linkedin.com/in/akash-sharma-dev | github.com/akash-sharma
+
+PROFESSIONAL SUMMARY
+Full-Stack Software Engineer with 4 years of experience building web applications. Passionate and results-driven developer leveraging cutting-edge technologies to spearhead dynamic features and create synergistic user experiences.
+
+TECHNICAL SKILLS
+Languages: JavaScript, TypeScript, Python, HTML5, CSS3
+Frameworks & Libraries: React, Node.js, Express, Tailwind CSS, Redux
+Databases & Tools: MongoDB, PostgreSQL, Git, Docker, Postman, Linux
+
+WORK EXPERIENCE
+Software Engineer | Apex FinTech Solutions, Bengaluru | July 2022 – Present
+- Responsible for developing customer-facing web dashboard using React and TypeScript.
+- Worked on backend REST APIs in Node.js and integrated PostgreSQL database.
+- Collaborated with product managers to deliver sprint items on time.
+- Helped optimize database queries and resolved bugs reported by QA team.
+
+Associate Software Engineer | CloudNine Tech, Pune | August 2020 – June 2022
+- Built reusable UI components in React and styled with Tailwind CSS.
+- Assisted in migrating monolithic endpoints to express microservices.
+- Fixed frontend bugs and improved cross-browser responsiveness.
+
+PROJECTS
+E-Commerce Checkout Redesign | React, Node.js, PostgreSQL
+- Built cart and payment checkout flow for an online marketplace.
+- Integrated third-party payment gateway and tested webhooks.
+
+EDUCATION
+B.Tech in Computer Science & Engineering | Visvesvaraya Technological University (VTU) | 2016 – 2020 | CGPA: 8.2/10

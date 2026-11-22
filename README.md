@@ -117,7 +117,7 @@ JobSync/
 │   │       ├── tailor/route.ts       # Structured Gemini engine & quota enforcement
 │   │       ├── export/pdf/route.ts   # ATS single-column PDF generator
 │   │       ├── export/docx/route.ts  # ATS-clean DOCX generator
-│   │       ├── razorpay/order/route.ts # Server-side order creation
+│   │       ├── razorpay/create-order/route.ts # Server-side order creation
 │   │       ├── razorpay/webhook/route.ts # Constant-time HMAC & idempotency
 │   │       └── user/delete-data/route.ts # Permanent DPDP privacy purge
 │   ├── components/                   # UI components (Editorial & high-contrast)
