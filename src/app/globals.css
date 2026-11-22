@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 20% 98%;
+    --foreground: 220 20% 10%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 173 80% 26%;
+  }
+
+  body {
+    background-color: #faf9f6;
+    color: #111827;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Restrained Editorial Typography & Precision Controls */
+.editorial-border {
+  border: 1px solid #e5e7eb;
+}
+
+.editorial-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+}
+
+.editorial-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-weight: 500;
+  border-radius: 0.25rem;
+}
+
+/* Custom scrollbars for workspace panels */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
